@@ -13,7 +13,7 @@ import {
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getUsername, storeUsername } from "../utils/helper";
 
 interface SettingsInterface {}
 
@@ -22,39 +22,8 @@ export const Settings = (props: SettingsInterface) => {
   const [username, setUsername] = useState("");
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const getUsername = async () => {
-    try {
-      const value = await AsyncStorage.getItem("USERNAME");
-      if (value !== null) {
-        setUsername(value);
-      }
-    } catch (e) {
-      alert(e);
-    }
-  };
-
-  const storeUsername = async (value: string) => {
-    try {
-      await AsyncStorage.setItem("USERNAME", value);
-      console.log("saved");
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const removeUsername = async (key: string) => {
-    try {
-      await AsyncStorage.removeItem(key);
-    } catch (e) {
-      // remove error
-    }
-
-    console.log("Done.");
-  };
-
   useEffect(() => {
-    // removeUsername("USERNAME");
-    getUsername();
+    getUsername().then((value: any) => setUsername(value));
   }, []);
 
   return (
