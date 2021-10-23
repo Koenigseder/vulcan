@@ -1,21 +1,9 @@
 import React, { useState } from "react";
-import {
-  Text,
-  HStack,
-  Center,
-  Switch,
-  useColorMode,
-  NativeBaseProvider,
-  extendTheme,
-  View,
-  Box,
-  StatusBar,
-  useColorModeValue,
-} from "native-base";
-import { Footer } from "./frontend/components/Footer";
-import { Settings } from "./frontend/pages/Settings";
-import { Home } from "./frontend/pages/Home";
-import { Vocs } from "./frontend/pages/Vocs";
+import { NativeBaseProvider, Box, useColorModeValue } from "native-base";
+import { Footer } from "./package/frontend/components/Footer";
+import { Settings } from "./package/frontend/pages/Settings";
+import { Home } from "./package/frontend/pages/Home";
+import { Vocs } from "./package/frontend/pages/Vocs";
 
 // // Define the config
 const config = {
