@@ -1,21 +1,6 @@
 import Ionicons from "@expo/vector-icons/build/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
-import {
-  Box,
-  Button,
-  Collapse,
-  Divider,
-  Fab,
-  FlatList,
-  Heading,
-  HStack,
-  Icon,
-  IconButton,
-  Stack,
-  Stagger,
-  Text,
-  useDisclose,
-} from "native-base";
+import { FlatList, Heading, HStack, IconButton, Stack } from "native-base";
 import React from "react";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 import { VocCard } from "../cards/VocCard";

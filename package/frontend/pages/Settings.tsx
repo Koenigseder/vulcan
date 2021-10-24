@@ -11,20 +11,28 @@ import {
   Text,
   useColorMode,
 } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Feather } from "@expo/vector-icons";
-import { getUsername, storeUsername } from "../utils/helper";
+import {
+  storeAmountOfVocsPerUnit,
+  storeColorMode,
+  storeUsername,
+} from "../utils/helper";
 
-interface SettingsInterface {}
+interface SettingsInterface {
+  username: string;
+  setUsername: (s: string) => void;
+  amountOfVocsPerUnit: number;
+  setAmountOfVocsPerUnit: (n: number) => void;
+}
 
 export const Settings = (props: SettingsInterface) => {
-  const [numberVocs, setNumberVocs] = useState(10);
-  const [username, setUsername] = useState("");
   const { colorMode, toggleColorMode } = useColorMode();
-
-  useEffect(() => {
-    getUsername().then((value: any) => setUsername(value));
-  }, []);
+  const [username, setUsername] = useState(props.username);
+  const [amountOfVocsPerUnit, setAmountOfVocsPerUnit] = useState(
+    props.amountOfVocsPerUnit
+  );
+  const [selectedColorMode, setSelectedColorMode] = useState(colorMode);
 
   return (
     <Stack>
@@ -42,13 +50,15 @@ export const Settings = (props: SettingsInterface) => {
           <Input
             flex={1}
             value={username}
-            placeholder="Benutzername"
             size="lg"
             onChangeText={(value) => setUsername(value)}
           />
           <Button
             isDisabled={!username}
-            onPress={() => storeUsername(username)}
+            onPress={() => {
+              storeUsername(username);
+              props.setUsername(username);
+            }}
           >
             {<Feather name="save" size={24} color="black" />}
           </Button>
@@ -60,21 +70,16 @@ export const Settings = (props: SettingsInterface) => {
         <Text textAlign="left" mb="3" paddingLeft="10px">
           Wie viele Wörter sollen in einer Lernsession abgefragt werden?
         </Text>
-        <Stack
-          direction="row"
-          alignSelf="center"
-          space="sm"
-          paddingRight="10px"
-        >
-          <Text>{numberVocs}</Text>
+        <HStack display="flex" alignItems="center" space="sm">
+          <Text paddingLeft="5px">{amountOfVocsPerUnit}</Text>
           <Slider
-            value={numberVocs}
+            flex={1}
+            value={amountOfVocsPerUnit}
             step={1}
             minValue={5}
             maxValue={100}
-            w="90%"
             onChange={(value) => {
-              setNumberVocs(Math.floor(value));
+              setAmountOfVocsPerUnit(value);
             }}
           >
             <Slider.Track>
@@ -82,7 +87,16 @@ export const Settings = (props: SettingsInterface) => {
             </Slider.Track>
             <Slider.Thumb />
           </Slider>
-        </Stack>
+          <Button
+            isDisabled={!amountOfVocsPerUnit}
+            onPress={() => {
+              storeAmountOfVocsPerUnit(amountOfVocsPerUnit.toString());
+              props.setAmountOfVocsPerUnit(amountOfVocsPerUnit);
+            }}
+          >
+            {<Feather name="save" size={24} color="black" />}
+          </Button>
+        </HStack>
         <Divider my="3" thickness="1" />
         <Heading textAlign="left" mb="2" size="lg" paddingLeft="10px">
           Beleuchtungsmodus
@@ -90,22 +104,37 @@ export const Settings = (props: SettingsInterface) => {
         <Text textAlign="left" mb="3" paddingLeft="10px">
           Wechsle zwischen Dark- und Light-Mode
         </Text>
-        <HStack space={2} alignItems="center" paddingLeft="20px">
-          <Feather
-            name="moon"
-            size={24}
-            color={colorMode === "light" ? "black" : "white"}
-          />
-          <Switch
-            size="lg"
-            isChecked={colorMode === "light" ? true : false}
-            onToggle={toggleColorMode}
-          />
-          <Feather
-            name="sun"
-            size={24}
-            color={colorMode === "light" ? "black" : "white"}
-          />
+        <HStack display="flex" alignItems="center">
+          <HStack flex={1} space={2} alignItems="center" paddingLeft="20px">
+            <Feather
+              name="moon"
+              size={24}
+              color={colorMode === "light" ? "black" : "white"}
+            />
+            <Switch
+              size="lg"
+              isChecked={selectedColorMode === "light" ? true : false}
+              onToggle={() => {
+                setSelectedColorMode(
+                  selectedColorMode === "light" ? "dark" : "light"
+                );
+              }}
+            />
+            <Feather
+              name="sun"
+              size={24}
+              color={colorMode === "light" ? "black" : "white"}
+            />
+          </HStack>
+          <Button
+            isDisabled={colorMode === selectedColorMode}
+            onPress={() => {
+              toggleColorMode();
+              storeColorMode(!selectedColorMode ? "light" : selectedColorMode);
+            }}
+          >
+            {<Feather name="save" size={24} color="black" />}
+          </Button>
         </HStack>
         <Divider my="3" thickness="1" />
       </ScrollView>

@@ -8,10 +8,13 @@ import {
   Text,
   useColorModeValue,
 } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { getUsername } from "../utils/helper";
 
-interface HomeInterface {}
+interface HomeInterface {
+  username: string;
+}
 
 export const Home = (props: HomeInterface) => {
   return (
@@ -22,7 +25,7 @@ export const Home = (props: HomeInterface) => {
         </Heading>
         <ScrollView>
           <Heading textAlign="center" mb="2" size="md">
-            Hallo Andrea, schön dich wiederzusehen!
+            {`Hallo ${props.username}, schön dich wiederzusehen!`}
           </Heading>
           <Divider my="3" thickness="1" />
           <Heading textAlign="left" mb="2" size="md" paddingLeft="10px">
