@@ -10,7 +10,7 @@ import {
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { getUsername } from "../utils/helper";
+import { getUsername, makeToast } from "../utils/helper";
 
 interface HomeInterface {
   username: string;
@@ -39,6 +39,7 @@ export const Home = (props: HomeInterface) => {
       <Button
         leftIcon={<Icon as={Ionicons} name="school" size="sm" />}
         style={{ position: "absolute", bottom: 20, alignSelf: "center" }}
+        onPress={() => makeToast("Leider noch nicht verfügbar...", null)}
       >
         Jetzt lernen!
       </Button>
