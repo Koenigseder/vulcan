@@ -101,7 +101,8 @@ export const getVocs = async () => {
   }
 };
 
-export const addVoc = async (voc: VocabularyInterface) => {
+// add voc to existing vocs
+export const createVoc = async (voc: VocabularyInterface) => {
   try {
     const allVocs = await AsyncStorage.getItem("VOCABULARY");
     if (allVocs !== null) {
@@ -123,12 +124,7 @@ export const addVoc = async (voc: VocabularyInterface) => {
   }
 };
 
-// // add an item to list of vocs
-// export const addVoc = async (voc: VocabularyInterface) => {
-//   try {
-//     await AsyncStorage.
-//   }
-// }
+export const editVoc = async (voc: VocabularyInterface) => {};
 
 // removes an item from savefile
 export const removeItem = async (key: string, message?: string) => {

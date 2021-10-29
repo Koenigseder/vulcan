@@ -2,28 +2,29 @@ import { Button, FormControl, Input, Modal } from "native-base";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { VocabularyInterface } from "../../interfaces/VocabularyInterface";
-import { addVoc, getVocs, removeItem } from "../../utils/helper";
 
 interface VocModalProps {
-  visible: boolean;
-  setVisible: (b: boolean) => void;
-  saveData: (voc: VocabularyInterface) => void;
-  editKey: number;
-  editData: VocabularyInterface;
-  setEditData: (q: VocabularyInterface) => void;
+  modalVisible: boolean;
+  setModalVisible: (b: boolean) => void;
+  createVoc: (voc: VocabularyInterface) => void;
 }
 
 export const VocModal = (props: VocModalProps) => {
   const [inputForeignWord, setInputForeignWord] = useState("");
   const [inputKnownWord, setInputKnownWord] = useState("");
 
+  useEffect(() => {
+    if (!props.modalVisible) {
+      setInputForeignWord("");
+      setInputKnownWord("");
+    }
+  }, [props.modalVisible]);
+
   return (
     <Modal
-      isOpen={props.visible}
+      isOpen={props.modalVisible}
       onClose={() => {
-        props.setVisible(false);
-        setInputKnownWord("");
-        setInputForeignWord("");
+        props.setModalVisible(false);
       }}
     >
       <Modal.Content maxWidth="400px">
@@ -51,9 +52,7 @@ export const VocModal = (props: VocModalProps) => {
               variant="ghost"
               colorScheme="blueGray"
               onPress={() => {
-                props.setVisible(false);
-                setInputForeignWord("");
-                setInputKnownWord("");
+                props.setModalVisible(false);
               }}
             >
               Abbrechen
@@ -61,13 +60,11 @@ export const VocModal = (props: VocModalProps) => {
             <Button
               isDisabled={!inputForeignWord.trim() || !inputKnownWord.trim()}
               onPress={() => {
-                props.saveData({
+                props.createVoc({
                   id: -1,
                   foreign_word: inputForeignWord.trim(),
                   known_word: inputKnownWord.trim(),
                 });
-                setInputForeignWord("");
-                setInputKnownWord("");
               }}
             >
               Speichern

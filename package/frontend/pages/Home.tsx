@@ -12,11 +12,11 @@ import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { getUsername, makeToast } from "../utils/helper";
 
-interface HomeInterface {
+interface HomeProps {
   username: string;
 }
 
-export const Home = (props: HomeInterface) => {
+export const Home = (props: HomeProps) => {
   return (
     <>
       <Stack>

@@ -9,12 +9,12 @@ import {
 import { Ionicons, Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 
-interface FooterInterface {
+interface FooterProps {
   selectedElement: number;
   setSelectedElement: (n: number) => void;
 }
 
-export const Footer = (props: FooterInterface) => {
+export const Footer = (props: FooterProps) => {
   return (
     <>
       <HStack bg="indigo.600" alignItems="center" shadow={6}>
