@@ -19,14 +19,14 @@ import {
   storeUsername,
 } from "../utils/helper";
 
-interface SettingsInterface {
+interface SettingsProps {
   username: string;
   setUsername: (s: string) => void;
   amountOfVocsPerUnit: number;
   setAmountOfVocsPerUnit: (n: number) => void;
 }
 
-export const Settings = (props: SettingsInterface) => {
+export const Settings = (props: SettingsProps) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const [username, setUsername] = useState(props.username);
   const [amountOfVocsPerUnit, setAmountOfVocsPerUnit] = useState(
