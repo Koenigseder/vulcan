@@ -3,6 +3,9 @@ import { AntDesign } from "@expo/vector-icons";
 import React from "react";
 
 interface VocCardProps {
+  index: number;
+  setEditKey: (i: number) => void;
+  setModalVisible: (b: boolean) => void;
   foreign_word: string;
   known_word: string;
 }
@@ -32,9 +35,13 @@ export const VocCard = (props: VocCardProps) => {
           </Stack>
         </Box>
         <IconButton
-          key="add"
+          key="edit"
           variant="ghost"
           _icon={{ as: AntDesign, name: "edit" }}
+          onPress={() => {
+            props.setEditKey(props.index);
+            props.setModalVisible(true);
+          }}
         />
       </HStack>
     </Box>

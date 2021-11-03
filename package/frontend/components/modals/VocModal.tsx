@@ -1,4 +1,5 @@
-import { Button, FormControl, Input, Modal } from "native-base";
+import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
+import { Button, FormControl, Input, Modal, Row } from "native-base";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { VocabularyInterface } from "../../interfaces/VocabularyInterface";
@@ -6,7 +7,11 @@ import { VocabularyInterface } from "../../interfaces/VocabularyInterface";
 interface VocModalProps {
   modalVisible: boolean;
   setModalVisible: (b: boolean) => void;
+  setAlertVisible: (b: boolean) => void;
+  allVocs: VocabularyInterface[];
+  editKey: number;
   createVoc: (voc: VocabularyInterface) => void;
+  editVoc: (voc: VocabularyInterface, index: number) => void;
 }
 
 export const VocModal = (props: VocModalProps) => {
@@ -17,6 +22,11 @@ export const VocModal = (props: VocModalProps) => {
     if (!props.modalVisible) {
       setInputForeignWord("");
       setInputKnownWord("");
+    } else {
+      if (props.editKey !== -1) {
+        setInputForeignWord(props.allVocs[props.editKey].foreign_word);
+        setInputKnownWord(props.allVocs[props.editKey].known_word);
+      }
     }
   }, [props.modalVisible]);
 
@@ -29,7 +39,11 @@ export const VocModal = (props: VocModalProps) => {
     >
       <Modal.Content maxWidth="400px">
         <Modal.CloseButton />
-        <Modal.Header>Neue Vokabel hinzufügen</Modal.Header>
+        <Modal.Header>
+          {props.editKey === -1
+            ? "Neue Vokabel hinzufügen"
+            : "Vokabel bearbeiten"}
+        </Modal.Header>
         <Modal.Body>
           <FormControl>
             <FormControl.Label>Fremdwort</FormControl.Label>
@@ -47,28 +61,51 @@ export const VocModal = (props: VocModalProps) => {
           </FormControl>
         </Modal.Body>
         <Modal.Footer>
-          <Button.Group space={2}>
-            <Button
-              variant="ghost"
-              colorScheme="blueGray"
-              onPress={() => {
-                props.setModalVisible(false);
-              }}
-            >
-              Abbrechen
-            </Button>
-            <Button
-              isDisabled={!inputForeignWord.trim() || !inputKnownWord.trim()}
-              onPress={() => {
-                props.createVoc({
-                  id: -1,
-                  foreign_word: inputForeignWord.trim(),
-                  known_word: inputKnownWord.trim(),
-                });
-              }}
-            >
-              Speichern
-            </Button>
+          <Button.Group flex={1}>
+            {props.editKey !== -1 ? (
+              <Button
+                colorScheme="danger"
+                onPress={() => {
+                  props.setAlertVisible(true);
+                }}
+              >
+                <MaterialIcons name="delete" size={24} color="white" />
+              </Button>
+            ) : (
+              <></>
+            )}
+            <Row flex={1} justifyContent="flex-end" space={2}>
+              <Button
+                variant="ghost"
+                colorScheme="blueGray"
+                onPress={() => {
+                  props.setModalVisible(false);
+                }}
+              >
+                Abbrechen
+              </Button>
+              <Button
+                isDisabled={!inputForeignWord.trim() || !inputKnownWord.trim()}
+                onPress={() => {
+                  props.editKey === -1
+                    ? props.createVoc({
+                        id: -1,
+                        foreign_word: inputForeignWord.trim(),
+                        known_word: inputKnownWord.trim(),
+                      })
+                    : props.editVoc(
+                        {
+                          id: props.editKey,
+                          foreign_word: inputForeignWord.trim(),
+                          known_word: inputKnownWord.trim(),
+                        },
+                        props.editKey
+                      );
+                }}
+              >
+                Speichern
+              </Button>
+            </Row>
           </Button.Group>
         </Modal.Footer>
       </Modal.Content>

@@ -107,12 +107,18 @@ export const createVoc = async (voc: VocabularyInterface) => {
     const allVocs = await AsyncStorage.getItem("VOCABULARY");
     if (allVocs !== null) {
       let allVocsJSON: VocabularyInterface[] = JSON.parse(allVocs);
-      allVocsJSON.push({
-        ...voc,
-        id: allVocsJSON[allVocsJSON.length - 1].id + 1,
-      });
-      await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
-      makeToast("Vokabel erfolgreich gespeichert!", true);
+      if (allVocsJSON.length > 0) {
+        allVocsJSON.push({
+          ...voc,
+          id: allVocsJSON[allVocsJSON.length - 1].id + 1,
+        });
+        await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
+        makeToast("Vokabel erfolgreich gespeichert!", true);
+      } else {
+        let newVoc: VocabularyInterface[] = [{ ...voc, id: 0 }];
+        await AsyncStorage.setItem("VOCABULARY", JSON.stringify(newVoc));
+        makeToast("Vokabel erfolgreich gespeichert!", true);
+      }
     } else {
       let newVoc: VocabularyInterface[] = [{ ...voc, id: 0 }];
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(newVoc));
@@ -124,14 +130,48 @@ export const createVoc = async (voc: VocabularyInterface) => {
   }
 };
 
-export const editVoc = async (voc: VocabularyInterface) => {};
+// edit a voc
+export const editVoc = async (voc: VocabularyInterface, index: number) => {
+  try {
+    const allVocs = await AsyncStorage.getItem("VOCABULARY");
+    if (allVocs !== null) {
+      let allVocsJSON: VocabularyInterface[] = JSON.parse(allVocs);
+      allVocsJSON[index] = {
+        ...allVocsJSON[index],
+        foreign_word: voc.foreign_word,
+        known_word: voc.known_word,
+      };
+      await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
+      makeToast("Vokabel erfolgreich gespeichert!", true);
+    }
+  } catch (e) {
+    console.log(e);
+    makeToast("Da ist leider etwas schiefgelaufen...", false);
+  }
+};
+
+// remove a voc
+export const deleteVoc = async (index: number) => {
+  try {
+    const allVocs = await AsyncStorage.getItem("VOCABULARY");
+    if (allVocs !== null) {
+      const allVocsJSON: VocabularyInterface[] = JSON.parse(allVocs);
+      allVocsJSON.splice(index, 1);
+      await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
+      makeToast("Vokabel erfolgreich gelöscht!", true);
+    }
+  } catch (e) {
+    console.log(e);
+    makeToast("Da ist leider etwas schiefgelaufen...", false);
+  }
+};
 
 // removes an item from savefile
 export const removeItem = async (key: string, message?: string) => {
   try {
     await AsyncStorage.removeItem(key);
     console.log(message);
-    makeToast("Erfolgreich gelöscht!", true);
+    makeToast(message || "Erfolgreich gelöscht!", true);
   } catch (e) {
     console.log("removeItem");
     makeToast("Etwas ist schiefgelaufen...", false);
