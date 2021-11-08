@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "native-base";
-import { useState } from "react";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 
 // function that generates a Toast
@@ -8,7 +7,7 @@ export const makeToast = (message: string, success: boolean | null) => {
   Toast.show({
     title: message,
     backgroundColor: success === null ? null : success ? "#076300" : "#ff0000",
-    duration: 1000,
+    duration: 1500,
     mb: "50px",
   });
 };
@@ -111,6 +110,7 @@ export const createVoc = async (voc: VocabularyInterface) => {
         allVocsJSON.push({
           ...voc,
           id: allVocsJSON[allVocsJSON.length - 1].id + 1,
+          repeated_without_mistake: null,
         });
         await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
         makeToast("Vokabel erfolgreich gespeichert!", true);
@@ -159,6 +159,26 @@ export const deleteVoc = async (index: number) => {
       allVocsJSON.splice(index, 1);
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
       makeToast("Vokabel erfolgreich gelöscht!", true);
+    }
+  } catch (e) {
+    console.log(e);
+    makeToast("Da ist leider etwas schiefgelaufen...", false);
+  }
+};
+
+export const editRepeatCountVoc = async (
+  repeatCount: number,
+  index: number
+) => {
+  try {
+    const allVocs = await AsyncStorage.getItem("VOCABULARY");
+    if (allVocs !== null) {
+      let allVocsJSON: VocabularyInterface[] = JSON.parse(allVocs);
+      allVocsJSON[index] = {
+        ...allVocsJSON[index],
+        repeated_without_mistake: repeatCount,
+      };
+      await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
     }
   } catch (e) {
     console.log(e);

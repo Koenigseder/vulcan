@@ -6,11 +6,10 @@ import {
   ScrollView,
   Stack,
   Text,
-  useColorModeValue,
 } from "native-base";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { getUsername, makeToast } from "../utils/helper";
+import { makeToast } from "../utils/helper";
 
 interface HomeProps {
   username: string;
@@ -37,6 +36,7 @@ export const Home = (props: HomeProps) => {
         </ScrollView>
       </Stack>
       <Button
+        bgColor="#ae4951"
         leftIcon={<Icon as={Ionicons} name="school" size="sm" />}
         style={{ position: "absolute", bottom: 20, alignSelf: "center" }}
         onPress={() => makeToast("Leider noch nicht verfügbar...", null)}

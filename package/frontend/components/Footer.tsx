@@ -1,13 +1,6 @@
-import {
-  Center,
-  HStack,
-  Icon,
-  NativeBaseProvider,
-  Pressable,
-  Text,
-} from "native-base";
+import { Center, HStack, Icon, Pressable, Text } from "native-base";
 import { Ionicons, Feather } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 
 interface FooterProps {
   selectedElement: number;
@@ -17,7 +10,7 @@ interface FooterProps {
 export const Footer = (props: FooterProps) => {
   return (
     <>
-      <HStack bg="indigo.600" alignItems="center" shadow={6}>
+      <HStack bg="#ae4951" alignItems="center" shadow={6}>
         <Pressable
           opacity={props.selectedElement === 0 ? 1 : 0.5}
           py="3"

@@ -54,6 +54,7 @@ export const Settings = (props: SettingsProps) => {
             onChangeText={(value) => setUsername(value)}
           />
           <Button
+            bgColor="#ae4951"
             isDisabled={!username}
             onPress={() => {
               storeUsername(username);
@@ -82,12 +83,13 @@ export const Settings = (props: SettingsProps) => {
               setAmountOfVocsPerUnit(value);
             }}
           >
-            <Slider.Track>
-              <Slider.FilledTrack />
+            <Slider.Track bg="#d4b0b3">
+              <Slider.FilledTrack bg="#ae4951" />
             </Slider.Track>
-            <Slider.Thumb />
+            <Slider.Thumb bg="#ae4951" />
           </Slider>
           <Button
+            bgColor="#ae4951"
             isDisabled={!amountOfVocsPerUnit}
             onPress={() => {
               storeAmountOfVocsPerUnit(amountOfVocsPerUnit.toString());
@@ -112,6 +114,8 @@ export const Settings = (props: SettingsProps) => {
               color={colorMode === "light" ? "black" : "white"}
             />
             <Switch
+              onThumbColor="#ae4951"
+              onTrackColor="#d4b0b3"
               size="lg"
               isChecked={selectedColorMode === "light" ? true : false}
               onToggle={() => {
@@ -127,6 +131,7 @@ export const Settings = (props: SettingsProps) => {
             />
           </HStack>
           <Button
+            bgColor="#ae4951"
             isDisabled={colorMode === selectedColorMode}
             onPress={() => {
               toggleColorMode();

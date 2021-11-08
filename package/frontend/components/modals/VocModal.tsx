@@ -85,6 +85,7 @@ export const VocModal = (props: VocModalProps) => {
                 Abbrechen
               </Button>
               <Button
+                bgColor="#ae4951"
                 isDisabled={!inputForeignWord.trim() || !inputKnownWord.trim()}
                 onPress={() => {
                   props.editKey === -1
@@ -95,7 +96,7 @@ export const VocModal = (props: VocModalProps) => {
                       })
                     : props.editVoc(
                         {
-                          id: props.editKey,
+                          id: -1,
                           foreign_word: inputForeignWord.trim(),
                           known_word: inputKnownWord.trim(),
                         },

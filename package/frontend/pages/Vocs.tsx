@@ -11,7 +11,6 @@ import {
   Spinner,
   Stack,
   Text,
-  VStack,
 } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
@@ -147,6 +146,7 @@ export const Vocs = (props: VocsProps) => {
                 setModalVisible={setModalVisible}
                 foreign_word={item.foreign_word}
                 known_word={item.known_word}
+                repeated_without_mistake={item.repeated_without_mistake}
               />
             )}
             keyExtractor={(item) => item.id.toString()}
