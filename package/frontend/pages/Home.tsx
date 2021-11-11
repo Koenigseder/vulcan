@@ -6,14 +6,18 @@ import {
   ScrollView,
   Stack,
   Text,
-  useColorModeValue,
 } from "native-base";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { makeToast } from "../utils/helper";
 
-interface HomeInterface {}
+interface HomeProps {
+  username: string;
+  setSelectedElement: (n: number) => void;
+  allVocsLength: number | undefined;
+}
 
-export const Home = (props: HomeInterface) => {
+export const Home = (props: HomeProps) => {
   return (
     <>
       <Stack>
@@ -22,7 +26,7 @@ export const Home = (props: HomeInterface) => {
         </Heading>
         <ScrollView>
           <Heading textAlign="center" mb="2" size="md">
-            Hallo Andrea, schön dich wiederzusehen!
+            {`Hallo ${props.username}, schön dich wiederzusehen!`}
           </Heading>
           <Divider my="3" thickness="1" />
           <Heading textAlign="left" mb="2" size="md" paddingLeft="10px">
@@ -34,8 +38,14 @@ export const Home = (props: HomeInterface) => {
         </ScrollView>
       </Stack>
       <Button
+        bgColor="#ae4951"
         leftIcon={<Icon as={Ionicons} name="school" size="sm" />}
         style={{ position: "absolute", bottom: 20, alignSelf: "center" }}
+        onPress={() =>
+          props.allVocsLength > 0
+            ? props.setSelectedElement(3)
+            : makeToast("Es sind noch keine Vokabeln vorhanden", null)
+        }
       >
         Jetzt lernen!
       </Button>
