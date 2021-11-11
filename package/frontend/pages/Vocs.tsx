@@ -12,46 +12,64 @@ import {
   Stack,
   Text,
 } from "native-base";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 import { VocCard } from "../cards/VocCard";
 import { VocModal } from "../components/modals/VocModal";
-import { createVoc, deleteVoc, editVoc, getVocs } from "../utils/helper";
+import { createVoc, deleteVoc, editVoc } from "../utils/helper";
 import { TouchableOpacity } from "react-native";
 
-interface VocsProps {}
+interface VocsProps {
+  allVocs: VocabularyInterface[];
+  setAllVocs: (vocs: VocabularyInterface[]) => void;
+  isAllVocsLoading: boolean;
+}
 
 export const Vocs = (props: VocsProps) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [allVocs, setAllVocs] = useState<VocabularyInterface[]>();
-  const [isLoading, setIsLoading] = useState(true);
+  const { allVocs, setAllVocs, isAllVocsLoading } = props;
 
+  const [modalVisible, setModalVisible] = useState(false);
   const [editKey, setEditKey] = useState(-1);
 
   const cancelRef = useRef<TouchableOpacity>();
   const [alertVisible, setAlertVisible] = useState(false);
 
   const handleCreateVoc = (voc: VocabularyInterface) => {
-    createVoc({ ...voc }).then(() => setModalVisible(false));
+    createVoc({ ...voc }).then(() => {
+      setModalVisible(false);
+      setAllVocs([
+        ...allVocs,
+        {
+          ...voc,
+          id: allVocs[allVocs.length - 1].id + 1,
+          repeated_without_mistake: null,
+        },
+      ]);
+    });
   };
 
   const handleEditVoc = (voc: VocabularyInterface, index: number) => {
-    editVoc({ ...voc }, index).then(() => setModalVisible(false));
+    editVoc({ ...voc }, index).then(() => {
+      setModalVisible(false);
+      const newList = [...allVocs];
+      newList[index] = {
+        ...allVocs[index],
+        foreign_word: voc.foreign_word,
+        known_word: voc.known_word,
+      };
+      setAllVocs(newList);
+    });
   };
 
   const handleDeleteVoc = (index: number) => {
     deleteVoc(index).then(() => {
       setModalVisible(false);
       setAlertVisible(false);
+      const newVocs = [...allVocs];
+      newVocs.splice(index, 1);
+      setAllVocs(newVocs);
     });
   };
-
-  useEffect(() => {
-    getVocs().then((value: any) => {
-      setAllVocs(value);
-      setIsLoading(false);
-    });
-  }, [modalVisible]);
 
   return (
     <>
@@ -60,7 +78,7 @@ export const Vocs = (props: VocsProps) => {
         setModalVisible={setModalVisible}
         setAlertVisible={setAlertVisible}
         editKey={editKey}
-        allVocs={allVocs}
+        allVocs={props.allVocs}
         createVoc={handleCreateVoc}
         editVoc={handleEditVoc}
       />
@@ -74,7 +92,7 @@ export const Vocs = (props: VocsProps) => {
           <AlertDialog.Header>Vokabel löschen</AlertDialog.Header>
           <AlertDialog.Body>
             <Text>{`Bist du sicher, dass du die Vokabel "${
-              alertVisible ? allVocs[editKey].foreign_word : ""
+              alertVisible ? props.allVocs[editKey].foreign_word : ""
             }" löschen möchtest?`}</Text>
             <Text bold style={{ color: "red" }}>
               Dies kann nicht rückgängig gemacht werden!
@@ -123,7 +141,7 @@ export const Vocs = (props: VocsProps) => {
             />
           </HStack>
         </HStack>
-        {isLoading ? (
+        {isAllVocsLoading ? (
           <Center flex={1}>
             <Spinner size="lg" />
             <Heading color="primary.500" fontSize="lg" paddingTop="10px">

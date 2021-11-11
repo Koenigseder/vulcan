@@ -13,6 +13,8 @@ import { makeToast } from "../utils/helper";
 
 interface HomeProps {
   username: string;
+  setSelectedElement: (n: number) => void;
+  allVocsLength: number | undefined;
 }
 
 export const Home = (props: HomeProps) => {
@@ -39,7 +41,11 @@ export const Home = (props: HomeProps) => {
         bgColor="#ae4951"
         leftIcon={<Icon as={Ionicons} name="school" size="sm" />}
         style={{ position: "absolute", bottom: 20, alignSelf: "center" }}
-        onPress={() => makeToast("Leider noch nicht verfügbar...", null)}
+        onPress={() =>
+          props.allVocsLength > 0
+            ? props.setSelectedElement(3)
+            : makeToast("Es sind noch keine Vokabeln vorhanden", null)
+        }
       >
         Jetzt lernen!
       </Button>
