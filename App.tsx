@@ -4,6 +4,7 @@ import {
   Box,
   useColorModeValue,
   useColorMode,
+  extendTheme,
 } from "native-base";
 import { Footer } from "./package/frontend/components/Footer";
 import { Settings } from "./package/frontend/pages/Settings";
@@ -13,23 +14,26 @@ import {
   getAmountVocsPerUnit,
   getColorMode,
   getUsername,
+  getVocs,
 } from "./package/frontend/utils/helper";
+import { Learn } from "./package/frontend/pages/Learn";
+import { VocabularyInterface } from "./package/frontend/interfaces/VocabularyInterface";
 
-// // Define the config
+// Define the config
 const config = {
   dependencies: {
     "linear-gradient": require("expo-linear-gradient").LinearGradient,
   },
 };
 
-// // extend the theme
-// export const theme = extendTheme({ config });
-
 const Base = () => {
   const { setColorMode } = useColorMode();
-  const [selectedElement, setSelectedElement] = useState(1);
+  const [selectedElement, setSelectedElement] = useState(1); // 0 = Vocs; 1 = Home; 2 = Settings; 3 = Learn
   const [username, setUsername] = useState("");
   const [amountOfVocsPerUnit, setAmountOfVocsPerUnit] = useState(10);
+
+  const [allVocs, setAllVocs] = useState<VocabularyInterface[]>();
+  const [isAllVocsLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getColorMode().then((value: any) =>
@@ -39,6 +43,10 @@ const Base = () => {
     getAmountVocsPerUnit().then((value: any) =>
       setAmountOfVocsPerUnit(Math.floor(value))
     );
+    getVocs().then((value: any) => {
+      setAllVocs(value);
+      setIsLoading(false);
+    });
   }, []);
 
   return (
@@ -51,15 +59,31 @@ const Base = () => {
         paddingRight="20px"
       >
         {selectedElement === 0 ? (
-          <Vocs />
+          <Vocs
+            allVocs={allVocs ? allVocs : []}
+            setAllVocs={setAllVocs}
+            isAllVocsLoading={isAllVocsLoading}
+          />
         ) : selectedElement === 1 ? (
-          <Home username={username} />
-        ) : (
+          <Home
+            username={username}
+            setSelectedElement={setSelectedElement}
+            allVocsLength={allVocs?.length}
+          />
+        ) : selectedElement === 2 ? (
           <Settings
             username={username}
             setUsername={setUsername}
             amountOfVocsPerUnit={amountOfVocsPerUnit}
             setAmountOfVocsPerUnit={setAmountOfVocsPerUnit}
+            allVocs={allVocs ? allVocs : []}
+          />
+        ) : (
+          <Learn
+            allVocs={allVocs ? allVocs : []}
+            vocsPerUnit={amountOfVocsPerUnit}
+            setAllVocs={setAllVocs}
+            setSelectedElement={setSelectedElement}
           />
         )}
       </Box>

@@ -11,19 +11,21 @@ import {
   Text,
   useColorMode,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import {
   storeAmountOfVocsPerUnit,
   storeColorMode,
   storeUsername,
 } from "../utils/helper";
+import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 
 interface SettingsProps {
   username: string;
   setUsername: (s: string) => void;
   amountOfVocsPerUnit: number;
   setAmountOfVocsPerUnit: (n: number) => void;
+  allVocs: VocabularyInterface[];
 }
 
 export const Settings = (props: SettingsProps) => {
@@ -33,6 +35,13 @@ export const Settings = (props: SettingsProps) => {
     props.amountOfVocsPerUnit
   );
   const [selectedColorMode, setSelectedColorMode] = useState(colorMode);
+
+  useEffect(() => {
+    if (props.amountOfVocsPerUnit > props.allVocs.length) {
+      storeAmountOfVocsPerUnit(props.allVocs.length.toString());
+      setAmountOfVocsPerUnit(props.allVocs.length);
+    }
+  }, []);
 
   return (
     <Stack>
@@ -77,8 +86,8 @@ export const Settings = (props: SettingsProps) => {
             flex={1}
             value={amountOfVocsPerUnit}
             step={1}
-            minValue={5}
-            maxValue={100}
+            minValue={0}
+            maxValue={props.allVocs.length}
             onChange={(value) => {
               setAmountOfVocsPerUnit(value);
             }}
