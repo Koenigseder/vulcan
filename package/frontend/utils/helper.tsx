@@ -20,8 +20,8 @@ export const getUsername = async () => {
       return value;
     }
   } catch (e) {
-    makeToast("Da ist leider etwas schiefgelaufen...", false);
     console.log(e);
+    makeToast("Da ist leider etwas schiefgelaufen...", false);
   }
 };
 
@@ -29,7 +29,6 @@ export const getUsername = async () => {
 export const storeUsername = async (value: string) => {
   try {
     await AsyncStorage.setItem("USERNAME", value);
-    makeToast("Benutzername erfolgreich gespeichert!", true);
   } catch (e) {
     console.log(e);
     makeToast("Benutzername konnte nicht gespeichert werden.", false);
@@ -53,7 +52,6 @@ export const getAmountVocsPerUnit = async () => {
 export const storeAmountOfVocsPerUnit = async (value: string) => {
   try {
     await AsyncStorage.setItem("AMOUNT_OF_VOCS_PER_UNIT", value);
-    makeToast("Anzahl erfolgreich gespeichert!", true);
   } catch (e) {
     console.log(e);
     makeToast("Anzahl konnte nicht gespeichert werden.", false);

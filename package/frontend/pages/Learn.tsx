@@ -132,6 +132,7 @@ export const Learn = (props: LearnProps) => {
           {currentVocIndex + 1 <= vocsPerUnit ? (
             <>
               <Text
+                color="white"
                 alignSelf="center"
                 fontSize="lg"
                 bold
@@ -143,6 +144,7 @@ export const Learn = (props: LearnProps) => {
                   : vocListForUnit[currentVocIndex]?.foreign_word}
               </Text>
               <Text
+                color="white"
                 alignSelf="center"
                 fontSize="lg"
                 marginBottom="50px"
@@ -155,6 +157,7 @@ export const Learn = (props: LearnProps) => {
             </>
           ) : (
             <Text
+              color="white"
               alignSelf="center"
               fontSize="lg"
               bold
