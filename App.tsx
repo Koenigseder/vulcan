@@ -76,7 +76,7 @@ const Base = () => {
           <Home
             username={username}
             setSelectedElement={setSelectedElement}
-            allVocsLength={allVocs?.length}
+            allVocs={allVocs}
           />
         ) : selectedElement === 2 ? (
           <Settings
