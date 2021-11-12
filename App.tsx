@@ -15,6 +15,7 @@ import {
   getColorMode,
   getUsername,
   getVocs,
+  storeAmountOfVocsPerUnit,
 } from "./package/frontend/utils/helper";
 import { Learn } from "./package/frontend/pages/Learn";
 import { VocabularyInterface } from "./package/frontend/interfaces/VocabularyInterface";
@@ -32,7 +33,7 @@ const Base = () => {
   const [username, setUsername] = useState("");
   const [amountOfVocsPerUnit, setAmountOfVocsPerUnit] = useState(10);
 
-  const [allVocs, setAllVocs] = useState<VocabularyInterface[]>();
+  const [allVocs, setAllVocs] = useState<VocabularyInterface[]>([]);
   const [isAllVocsLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -48,6 +49,13 @@ const Base = () => {
       setIsLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    if (amountOfVocsPerUnit > allVocs.length) {
+      storeAmountOfVocsPerUnit(allVocs.length.toString());
+      setAmountOfVocsPerUnit(allVocs.length);
+    }
+  }, [allVocs]);
 
   return (
     <>

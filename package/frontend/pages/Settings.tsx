@@ -14,6 +14,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import {
+  makeToast,
   storeAmountOfVocsPerUnit,
   storeColorMode,
   storeUsername,
@@ -36,12 +37,12 @@ export const Settings = (props: SettingsProps) => {
   );
   const [selectedColorMode, setSelectedColorMode] = useState(colorMode);
 
-  useEffect(() => {
-    if (props.amountOfVocsPerUnit > props.allVocs.length) {
-      storeAmountOfVocsPerUnit(props.allVocs.length.toString());
-      setAmountOfVocsPerUnit(props.allVocs.length);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (props.amountOfVocsPerUnit > props.allVocs.length) {
+  //     storeAmountOfVocsPerUnit(props.allVocs.length.toString());
+  //     props.setAmountOfVocsPerUnit(props.allVocs.length);
+  //   }
+  // }, []);
 
   return (
     <Stack>
@@ -66,7 +67,9 @@ export const Settings = (props: SettingsProps) => {
             bgColor="#ae4951"
             isDisabled={!username}
             onPress={() => {
-              storeUsername(username);
+              storeUsername(username).then(() =>
+                makeToast("Benutzername erfolgreich gespeichert.", true)
+              );
               props.setUsername(username);
             }}
           >
@@ -86,7 +89,7 @@ export const Settings = (props: SettingsProps) => {
             flex={1}
             value={amountOfVocsPerUnit}
             step={1}
-            minValue={0}
+            minValue={1}
             maxValue={props.allVocs.length}
             onChange={(value) => {
               setAmountOfVocsPerUnit(value);
@@ -101,7 +104,9 @@ export const Settings = (props: SettingsProps) => {
             bgColor="#ae4951"
             isDisabled={!amountOfVocsPerUnit}
             onPress={() => {
-              storeAmountOfVocsPerUnit(amountOfVocsPerUnit.toString());
+              storeAmountOfVocsPerUnit(amountOfVocsPerUnit.toString()).then(
+                () => makeToast("Anzahl erfolgreich gespeichert.", true)
+              );
               props.setAmountOfVocsPerUnit(amountOfVocsPerUnit);
             }}
           >
