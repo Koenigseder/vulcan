@@ -60,10 +60,10 @@ export const Learn = (props: LearnProps) => {
   };
 
   const modifyRepeatedWithoutMistake = (correct: boolean) => {
-    if (currentVocIndex + 1 >= vocsPerUnit) {
-      setCurrentVocIndex(currentVocIndex + 1);
-      return;
-    }
+    // if (currentVocIndex + 1 >= vocsPerUnit) {
+    //   setCurrentVocIndex(currentVocIndex + 1);
+    //   return;
+    // }
     if (correct) {
       const index = allVocs.findIndex(
         (voc) => voc.id === vocListForUnit[currentVocIndex].id

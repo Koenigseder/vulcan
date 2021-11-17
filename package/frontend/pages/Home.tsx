@@ -16,10 +16,13 @@ interface HomeProps {
   username: string;
   setSelectedElement: (n: number) => void;
   allVocs: VocabularyInterface[];
+  amountOfVocsPerUnit: number;
 }
 
 export const Home = (props: HomeProps) => {
   const getTrafficLightColor = () => {
+    if (props.allVocs?.length <= 0 || !props.allVocs)
+      return "Noch keine Statistiken vorhanden.";
     const resultRed = props.allVocs.filter(
       (value: VocabularyInterface) => value.repeated_without_mistake === null
     );
@@ -65,11 +68,16 @@ export const Home = (props: HomeProps) => {
         bgColor="#ae4951"
         leftIcon={<Icon as={Ionicons} name="school" size="sm" />}
         style={{ position: "absolute", bottom: 20, alignSelf: "center" }}
-        onPress={() =>
-          props.allVocs.length > 0
-            ? props.setSelectedElement(3)
-            : makeToast("Es sind noch keine Vokabeln vorhanden", null)
-        }
+        onPress={() => {
+          props.allVocs.length <= 0
+            ? makeToast("Es sind noch keine Vokabeln vorhanden.", null)
+            : props.amountOfVocsPerUnit <= 0
+            ? makeToast(
+                "Bitte passe die Anzahl der Vokabeln in den Einstellungen an.",
+                null
+              )
+            : props.setSelectedElement(3);
+        }}
       >
         Jetzt lernen!
       </Button>

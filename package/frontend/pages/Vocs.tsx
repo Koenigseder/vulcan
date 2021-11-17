@@ -37,14 +37,18 @@ export const Vocs = (props: VocsProps) => {
   const handleCreateVoc = (voc: VocabularyInterface) => {
     createVoc({ ...voc }).then(() => {
       setModalVisible(false);
-      setAllVocs([
-        ...allVocs,
-        {
-          ...voc,
-          id: allVocs[allVocs.length - 1].id + 1,
-          repeated_without_mistake: null,
-        },
-      ]);
+      if (allVocs === null || allVocs.length === 0) {
+        setAllVocs([{ ...voc, id: 0, repeated_without_mistake: null }]);
+      } else {
+        setAllVocs([
+          ...allVocs,
+          {
+            ...voc,
+            id: allVocs[allVocs.length - 1].id + 1,
+            repeated_without_mistake: null,
+          },
+        ]);
+      }
     });
   };
 

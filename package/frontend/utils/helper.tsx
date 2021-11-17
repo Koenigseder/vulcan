@@ -113,12 +113,16 @@ export const createVoc = async (voc: VocabularyInterface) => {
         await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
         makeToast("Vokabel erfolgreich gespeichert!", true);
       } else {
-        let newVoc: VocabularyInterface[] = [{ ...voc, id: 0 }];
+        let newVoc: VocabularyInterface[] = [
+          { ...voc, id: 0, repeated_without_mistake: null },
+        ];
         await AsyncStorage.setItem("VOCABULARY", JSON.stringify(newVoc));
         makeToast("Vokabel erfolgreich gespeichert!", true);
       }
     } else {
-      let newVoc: VocabularyInterface[] = [{ ...voc, id: 0 }];
+      let newVoc: VocabularyInterface[] = [
+        { ...voc, id: 0, repeated_without_mistake: null },
+      ];
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(newVoc));
       makeToast("Vokabel erfolgreich gespeichert!", true);
     }

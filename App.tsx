@@ -5,6 +5,9 @@ import {
   useColorModeValue,
   useColorMode,
   extendTheme,
+  Spinner,
+  Center,
+  Heading,
 } from "native-base";
 import { Footer } from "./package/frontend/components/Footer";
 import { Settings } from "./package/frontend/pages/Settings";
@@ -19,6 +22,7 @@ import {
 } from "./package/frontend/utils/helper";
 import { Learn } from "./package/frontend/pages/Learn";
 import { VocabularyInterface } from "./package/frontend/interfaces/VocabularyInterface";
+import { Introduction } from "./package/frontend/pages/Introduction";
 
 // Define the config
 const config = {
@@ -29,7 +33,7 @@ const config = {
 
 const Base = () => {
   const { setColorMode } = useColorMode();
-  const [selectedElement, setSelectedElement] = useState(1); // 0 = Vocs; 1 = Home; 2 = Settings; 3 = Learn
+  const [selectedElement, setSelectedElement] = useState(1); // 0 = Vocs; 1 = Home; 2 = Settings; 3 = Learn; 4 = Introduction
   const [username, setUsername] = useState("");
   const [amountOfVocsPerUnit, setAmountOfVocsPerUnit] = useState(10);
 
@@ -40,10 +44,17 @@ const Base = () => {
     getColorMode().then((value: any) =>
       setColorMode(value === null ? "light" : value)
     );
-    getUsername().then((value: any) => setUsername(value));
-    getAmountVocsPerUnit().then((value: any) =>
-      setAmountOfVocsPerUnit(Math.floor(value))
-    );
+    getUsername().then((value: any) => {
+      setUsername(value);
+      if (value === undefined || value === null) setSelectedElement(4);
+    });
+    getAmountVocsPerUnit().then((value: any) => {
+      if (value === null || value === undefined) {
+        setAmountOfVocsPerUnit(0);
+      } else {
+        setAmountOfVocsPerUnit(Math.floor(value));
+      }
+    });
     getVocs().then((value: any) => {
       setAllVocs(value);
       setIsLoading(false);
@@ -51,7 +62,10 @@ const Base = () => {
   }, []);
 
   useEffect(() => {
-    if (amountOfVocsPerUnit > allVocs.length) {
+    if (amountOfVocsPerUnit === undefined || amountOfVocsPerUnit === null) {
+      storeAmountOfVocsPerUnit("0");
+      setAmountOfVocsPerUnit(0);
+    } else if (amountOfVocsPerUnit > allVocs?.length) {
       storeAmountOfVocsPerUnit(allVocs.length.toString());
       setAmountOfVocsPerUnit(allVocs.length);
     }
@@ -66,7 +80,14 @@ const Base = () => {
         paddingLeft="20px"
         paddingRight="20px"
       >
-        {selectedElement === 0 ? (
+        {isAllVocsLoading ? (
+          <Center flex={1}>
+            <Spinner size="lg" />
+            <Heading color="primary.500" fontSize="lg" paddingTop="10px">
+              Laden
+            </Heading>
+          </Center>
+        ) : selectedElement === 0 ? (
           <Vocs
             allVocs={allVocs ? allVocs : []}
             setAllVocs={setAllVocs}
@@ -77,6 +98,7 @@ const Base = () => {
             username={username}
             setSelectedElement={setSelectedElement}
             allVocs={allVocs}
+            amountOfVocsPerUnit={amountOfVocsPerUnit}
           />
         ) : selectedElement === 2 ? (
           <Settings
@@ -86,11 +108,16 @@ const Base = () => {
             setAmountOfVocsPerUnit={setAmountOfVocsPerUnit}
             allVocs={allVocs ? allVocs : []}
           />
-        ) : (
+        ) : selectedElement === 3 ? (
           <Learn
             allVocs={allVocs ? allVocs : []}
             vocsPerUnit={amountOfVocsPerUnit}
             setAllVocs={setAllVocs}
+            setSelectedElement={setSelectedElement}
+          />
+        ) : (
+          <Introduction
+            setUsername={setUsername}
             setSelectedElement={setSelectedElement}
           />
         )}
@@ -98,6 +125,7 @@ const Base = () => {
       <Footer
         selectedElement={selectedElement}
         setSelectedElement={setSelectedElement}
+        isAllVocsLoading={isAllVocsLoading}
       />
     </>
   );
