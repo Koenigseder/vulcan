@@ -69,6 +69,8 @@ export const Home = (props: HomeProps) => {
         leftIcon={<Icon as={Ionicons} name="school" size="sm" />}
         style={{ position: "absolute", bottom: 20, alignSelf: "center" }}
         onPress={() => {
+          props.allVocs === undefined ||
+          props.allVocs === null ||
           props.allVocs.length <= 0
             ? makeToast("Es sind noch keine Vokabeln vorhanden.", null)
             : props.amountOfVocsPerUnit <= 0
