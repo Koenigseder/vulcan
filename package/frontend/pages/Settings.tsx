@@ -37,6 +37,15 @@ export const Settings = (props: SettingsProps) => {
   );
   const [selectedColorMode, setSelectedColorMode] = useState(colorMode);
 
+  useEffect(() => {
+    if (
+      props.amountOfVocsPerUnit === undefined ||
+      props.amountOfVocsPerUnit === null
+    ) {
+      setAmountOfVocsPerUnit(0);
+    }
+  }, []);
+
   // useEffect(() => {
   //   if (props.amountOfVocsPerUnit > props.allVocs.length) {
   //     storeAmountOfVocsPerUnit(props.allVocs.length.toString());
@@ -89,7 +98,7 @@ export const Settings = (props: SettingsProps) => {
             flex={1}
             value={amountOfVocsPerUnit}
             step={1}
-            minValue={1}
+            minValue={0}
             maxValue={props.allVocs.length}
             onChange={(value) => {
               setAmountOfVocsPerUnit(value);

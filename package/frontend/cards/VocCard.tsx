@@ -36,7 +36,8 @@ export const VocCard = (props: VocCardProps) => {
                 name="primitive-dot"
                 size={24}
                 color={
-                  props.repeated_without_mistake === null
+                  props.repeated_without_mistake === null ||
+                  props.repeated_without_mistake === undefined
                     ? "red"
                     : props.repeated_without_mistake < 8
                     ? "orange"

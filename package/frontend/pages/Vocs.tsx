@@ -7,10 +7,13 @@ import {
   FlatList,
   Heading,
   HStack,
+  Icon,
   IconButton,
+  Input,
   Spinner,
   Stack,
   Text,
+  VStack,
 } from "native-base";
 import React, { useRef, useState } from "react";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
@@ -28,8 +31,12 @@ interface VocsProps {
 export const Vocs = (props: VocsProps) => {
   const { allVocs, setAllVocs, isAllVocsLoading } = props;
 
+  const [vocs, setVocs] = useState(allVocs);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [editKey, setEditKey] = useState(-1);
+
+  const [inputSearch, setInputSearch] = useState("");
 
   const cancelRef = useRef<TouchableOpacity>();
   const [alertVisible, setAlertVisible] = useState(false);
@@ -37,14 +44,18 @@ export const Vocs = (props: VocsProps) => {
   const handleCreateVoc = (voc: VocabularyInterface) => {
     createVoc({ ...voc }).then(() => {
       setModalVisible(false);
-      setAllVocs([
-        ...allVocs,
-        {
-          ...voc,
-          id: allVocs[allVocs.length - 1].id + 1,
-          repeated_without_mistake: null,
-        },
-      ]);
+      if (allVocs === null || allVocs.length === 0) {
+        setAllVocs([{ ...voc, id: 0, repeated_without_mistake: null }]);
+      } else {
+        setAllVocs([
+          ...allVocs,
+          {
+            ...voc,
+            id: allVocs[allVocs.length - 1].id + 1,
+            repeated_without_mistake: null,
+          },
+        ]);
+      }
     });
   };
 
@@ -58,6 +69,8 @@ export const Vocs = (props: VocsProps) => {
         known_word: voc.known_word,
       };
       setAllVocs(newList);
+      setVocs(newList);
+      setInputSearch("");
     });
   };
 
@@ -69,6 +82,17 @@ export const Vocs = (props: VocsProps) => {
       newVocs.splice(index, 1);
       setAllVocs(newVocs);
     });
+  };
+
+  const handleSearch = (input: string) => {
+    const filteredVocs = allVocs.filter(
+      (value: VocabularyInterface) =>
+        value.foreign_word
+          .toLowerCase()
+          .startsWith(input.trim().toLowerCase()) ||
+        value.known_word.toLowerCase().startsWith(input.trim().toLowerCase())
+    );
+    setVocs(filteredVocs);
   };
 
   return (
@@ -118,28 +142,52 @@ export const Vocs = (props: VocsProps) => {
         </AlertDialog.Content>
       </AlertDialog>
       <Stack flex={1}>
-        <HStack display="flex" alignItems="center" mb={5}>
-          <Heading flex={1} textAlign="left" paddingLeft="10px" size="xl">
-            Vokabeln
-          </Heading>
-          <HStack flex={1} flexDirection="row" justifyContent="flex-end">
-            <IconButton
-              alignSelf="flex-start"
-              key="add"
-              variant="ghost"
-              _icon={{ as: MaterialIcons, name: "add" }}
-              onPress={() => {
-                setModalVisible(true);
-                setEditKey(-1);
-              }}
-            />
-            <IconButton
-              alignSelf="flex-start"
-              key="search"
-              variant="ghost"
-              _icon={{ as: Ionicons, name: "search" }}
-            />
-          </HStack>
+        <Heading textAlign="center" size="xl">
+          Vokabeln
+        </Heading>
+        <HStack mt="10px" flexDirection="row" width="100%">
+          <Input
+            mb="20px"
+            flex={1}
+            placeholder="Vokabel suchen"
+            value={inputSearch}
+            onChangeText={(value: string) => {
+              setInputSearch(value);
+              handleSearch(value);
+            }}
+            variant="filled"
+            borderRadius="20"
+            InputLeftElement={
+              <Icon
+                ml="2"
+                size="5"
+                color="gray.500"
+                as={<Ionicons name="search" />}
+              />
+            }
+            InputRightElement={
+              <Text
+                mr="10px"
+                color="gray.500"
+                onPress={() => {
+                  setInputSearch("");
+                  setVocs(allVocs);
+                }}
+              >
+                Abbrechen
+              </Text>
+            }
+          />
+          <IconButton
+            alignSelf="flex-start"
+            key="add"
+            variant="ghost"
+            _icon={{ as: MaterialIcons, name: "add" }}
+            onPress={() => {
+              setModalVisible(true);
+              setEditKey(-1);
+            }}
+          />
         </HStack>
         {isAllVocsLoading ? (
           <Center flex={1}>
@@ -156,10 +204,12 @@ export const Vocs = (props: VocsProps) => {
           </Center>
         ) : (
           <FlatList
-            data={allVocs}
+            data={vocs}
             renderItem={({ item, index }) => (
               <VocCard
-                index={index}
+                index={allVocs
+                  .map((e) => e.foreign_word)
+                  .indexOf(item.foreign_word)}
                 setEditKey={setEditKey}
                 setModalVisible={setModalVisible}
                 foreign_word={item.foreign_word}
