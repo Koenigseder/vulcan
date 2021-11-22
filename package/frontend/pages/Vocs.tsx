@@ -15,7 +15,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 import { VocCard } from "../cards/VocCard";
 import { VocModal } from "../components/modals/VocModal";
@@ -40,6 +40,10 @@ export const Vocs = (props: VocsProps) => {
 
   const cancelRef = useRef<TouchableOpacity>();
   const [alertVisible, setAlertVisible] = useState(false);
+
+  useEffect(() => {
+    setVocs(allVocs);
+  }, [allVocs]);
 
   const handleCreateVoc = (voc: VocabularyInterface) => {
     createVoc({ ...voc }).then(() => {
