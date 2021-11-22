@@ -77,7 +77,7 @@ export const Settings = (props: SettingsProps) => {
             isDisabled={!username}
             onPress={() => {
               storeUsername(username).then(() =>
-                makeToast("Benutzername erfolgreich gespeichert.", true)
+                makeToast("Benutzername erfolgreich gespeichert.")
               );
               props.setUsername(username);
             }}
@@ -114,7 +114,7 @@ export const Settings = (props: SettingsProps) => {
             isDisabled={!amountOfVocsPerUnit}
             onPress={() => {
               storeAmountOfVocsPerUnit(amountOfVocsPerUnit.toString()).then(
-                () => makeToast("Anzahl erfolgreich gespeichert.", true)
+                () => makeToast("Anzahl erfolgreich gespeichert.")
               );
               props.setAmountOfVocsPerUnit(amountOfVocsPerUnit);
             }}

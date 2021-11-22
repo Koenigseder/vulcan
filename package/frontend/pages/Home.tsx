@@ -72,11 +72,10 @@ export const Home = (props: HomeProps) => {
           props.allVocs === undefined ||
           props.allVocs === null ||
           props.allVocs.length <= 0
-            ? makeToast("Es sind noch keine Vokabeln vorhanden.", null)
+            ? makeToast("Es sind noch keine Vokabeln vorhanden.")
             : props.amountOfVocsPerUnit <= 0
             ? makeToast(
-                "Bitte passe die Anzahl der Vokabeln in den Einstellungen an.",
-                null
+                "Bitte passe die Anzahl der Vokabeln in den Einstellungen an."
               )
             : props.setSelectedElement(3);
         }}
