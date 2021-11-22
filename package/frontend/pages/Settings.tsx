@@ -1,3 +1,4 @@
+import Constants from "expo-constants";
 import {
   Button,
   Divider,
@@ -11,7 +12,7 @@ import {
   Text,
   useColorMode,
 } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, version } from "react";
 import { Feather } from "@expo/vector-icons";
 import {
   makeToast,
@@ -77,7 +78,7 @@ export const Settings = (props: SettingsProps) => {
             isDisabled={!username}
             onPress={() => {
               storeUsername(username).then(() =>
-                makeToast("Benutzername erfolgreich gespeichert.", true)
+                makeToast("Benutzername erfolgreich gespeichert.")
               );
               props.setUsername(username);
             }}
@@ -114,7 +115,7 @@ export const Settings = (props: SettingsProps) => {
             isDisabled={!amountOfVocsPerUnit}
             onPress={() => {
               storeAmountOfVocsPerUnit(amountOfVocsPerUnit.toString()).then(
-                () => makeToast("Anzahl erfolgreich gespeichert.", true)
+                () => makeToast("Anzahl erfolgreich gespeichert.")
               );
               props.setAmountOfVocsPerUnit(amountOfVocsPerUnit);
             }}
@@ -165,6 +166,7 @@ export const Settings = (props: SettingsProps) => {
           </Button>
         </HStack>
         <Divider my="3" thickness="1" />
+        <Text alignSelf="center">Version {Constants.manifest?.version}</Text>
       </ScrollView>
     </Stack>
   );

@@ -37,11 +37,11 @@ export const Home = (props: HomeProps) => {
         value.repeated_without_mistake >= 8
     );
     if (resultRed.length >= resultOrange.length && resultRed >= resultGreen) {
-      return "Du hast am meisten Vokabeln, die noch nie geübt wurden.";
+      return "Die meisten Vokabeln wurden noch nicht geübt.";
     } else if (resultOrange >= resultRed && resultOrange >= resultGreen) {
-      return "Du hast am meisten Vokabeln, die noch noch nicht oft geübt wurden.";
+      return "Die meisten Vokabeln wurden noch nicht oft genug geübt.";
     } else if (resultGreen >= resultRed && resultGreen >= resultOrange) {
-      return "Du hast am meisten Vokabeln, die oft genug geübt wurden.";
+      return "Die meisten Vokabeln wurden oft genug geübt.";
     }
   };
 
@@ -72,11 +72,10 @@ export const Home = (props: HomeProps) => {
           props.allVocs === undefined ||
           props.allVocs === null ||
           props.allVocs.length <= 0
-            ? makeToast("Es sind noch keine Vokabeln vorhanden.", null)
+            ? makeToast("Es sind noch keine Vokabeln vorhanden.")
             : props.amountOfVocsPerUnit <= 0
             ? makeToast(
-                "Bitte passe die Anzahl der Vokabeln in den Einstellungen an.",
-                null
+                "Bitte passe die Anzahl der Vokabeln in den Einstellungen an."
               )
             : props.setSelectedElement(3);
         }}

@@ -3,10 +3,9 @@ import { Toast } from "native-base";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 
 // function that generates a Toast
-export const makeToast = (message: string, success: boolean | null) => {
+export const makeToast = (message: string) => {
   Toast.show({
     title: message,
-    backgroundColor: success === null ? null : success ? "#076300" : "#ff0000",
     duration: 1500,
     mb: "50px",
   });
@@ -21,7 +20,7 @@ export const getUsername = async () => {
     }
   } catch (e) {
     console.log(e);
-    makeToast("Da ist leider etwas schiefgelaufen...", false);
+    makeToast("Da ist leider etwas schiefgelaufen...");
   }
 };
 
@@ -31,7 +30,7 @@ export const storeUsername = async (value: string) => {
     await AsyncStorage.setItem("USERNAME", value);
   } catch (e) {
     console.log(e);
-    makeToast("Benutzername konnte nicht gespeichert werden.", false);
+    makeToast("Benutzername konnte nicht gespeichert werden.");
   }
 };
 
@@ -44,7 +43,7 @@ export const getAmountVocsPerUnit = async () => {
     }
   } catch (e) {
     console.log(e);
-    makeToast("Da ist leider etwas schiefgelaufen...", false);
+    makeToast("Da ist leider etwas schiefgelaufen...");
   }
 };
 
@@ -54,7 +53,7 @@ export const storeAmountOfVocsPerUnit = async (value: string) => {
     await AsyncStorage.setItem("AMOUNT_OF_VOCS_PER_UNIT", value);
   } catch (e) {
     console.log(e);
-    makeToast("Anzahl konnte nicht gespeichert werden.", false);
+    makeToast("Anzahl konnte nicht gespeichert werden.");
   }
 };
 
@@ -67,7 +66,7 @@ export const getColorMode = async () => {
     }
   } catch (e) {
     console.log(e);
-    makeToast("Da ist leider etwas schiefgelaufen...", false);
+    makeToast("Da ist leider etwas schiefgelaufen...");
   }
 };
 
@@ -80,7 +79,7 @@ export const storeColorMode = async (value: "dark" | "light" | undefined) => {
     );
   } catch (e) {
     console.log(e);
-    makeToast("Da ist leider etwas schiefgelaufen...", false);
+    makeToast("Da ist leider etwas schiefgelaufen...");
   }
 };
 
@@ -94,7 +93,7 @@ export const getVocs = async () => {
     }
   } catch (e) {
     console.log(e);
-    makeToast("Da ist leider etwas schiefgelaufen...", false);
+    makeToast("Da ist leider etwas schiefgelaufen...");
   }
 };
 
@@ -111,24 +110,24 @@ export const createVoc = async (voc: VocabularyInterface) => {
           repeated_without_mistake: null,
         });
         await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
-        makeToast("Vokabel erfolgreich gespeichert!", true);
+        makeToast("Vokabel erfolgreich gespeichert!");
       } else {
         let newVoc: VocabularyInterface[] = [
           { ...voc, id: 0, repeated_without_mistake: null },
         ];
         await AsyncStorage.setItem("VOCABULARY", JSON.stringify(newVoc));
-        makeToast("Vokabel erfolgreich gespeichert!", true);
+        makeToast("Vokabel erfolgreich gespeichert!");
       }
     } else {
       let newVoc: VocabularyInterface[] = [
         { ...voc, id: 0, repeated_without_mistake: null },
       ];
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(newVoc));
-      makeToast("Vokabel erfolgreich gespeichert!", true);
+      makeToast("Vokabel erfolgreich gespeichert!");
     }
   } catch (e) {
     console.log(e);
-    makeToast("Da ist leider etwas schiefgelaufen...", false);
+    makeToast("Da ist leider etwas schiefgelaufen...");
   }
 };
 
@@ -144,11 +143,11 @@ export const editVoc = async (voc: VocabularyInterface, index: number) => {
         known_word: voc.known_word,
       };
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
-      makeToast("Vokabel erfolgreich gespeichert!", true);
+      makeToast("Vokabel erfolgreich gespeichert!");
     }
   } catch (e) {
     console.log(e);
-    makeToast("Da ist leider etwas schiefgelaufen...", false);
+    makeToast("Da ist leider etwas schiefgelaufen...");
   }
 };
 
@@ -160,11 +159,11 @@ export const deleteVoc = async (index: number) => {
       const allVocsJSON: VocabularyInterface[] = JSON.parse(allVocs);
       allVocsJSON.splice(index, 1);
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
-      makeToast("Vokabel erfolgreich gelöscht!", true);
+      makeToast("Vokabel erfolgreich gelöscht!");
     }
   } catch (e) {
     console.log(e);
-    makeToast("Da ist leider etwas schiefgelaufen...", false);
+    makeToast("Da ist leider etwas schiefgelaufen...");
   }
 };
 
@@ -184,7 +183,7 @@ export const editRepeatCountVoc = async (
     }
   } catch (e) {
     console.log(e);
-    makeToast("Da ist leider etwas schiefgelaufen...", false);
+    makeToast("Da ist leider etwas schiefgelaufen...");
   }
 };
 
@@ -193,9 +192,9 @@ export const removeItem = async (key: string, message?: string) => {
   try {
     await AsyncStorage.removeItem(key);
     console.log(message);
-    makeToast(message || "Erfolgreich gelöscht!", true);
+    makeToast(message || "Erfolgreich gelöscht!");
   } catch (e) {
     console.log("removeItem");
-    makeToast("Etwas ist schiefgelaufen...", false);
+    makeToast("Etwas ist schiefgelaufen...");
   }
 };
