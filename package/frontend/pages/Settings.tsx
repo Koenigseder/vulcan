@@ -165,6 +165,7 @@ export const Settings = (props: SettingsProps) => {
           </Button>
         </HStack>
         <Divider my="3" thickness="1" />
+        <Text alignSelf="center">Version Alpha 0.2</Text>
       </ScrollView>
     </Stack>
   );
