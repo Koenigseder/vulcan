@@ -24,6 +24,7 @@ import {
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 import AntDesign from "@expo/vector-icons/build/AntDesign";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
 
 interface SettingsProps {
   username: string;
@@ -84,11 +85,21 @@ export const Settings = (props: SettingsProps) => {
             </Text>
           </HStack>
           {isUserLoggedIn && (
-            <Button alignSelf="flex-end">
+            <Button>
               <Ionicons name="sync-sharp" size={24} color="black" />
             </Button>
           )}
         </HStack>
+        {/* <Button
+          width="30%"
+          marginLeft="10px"
+          leftIcon={
+            <MaterialCommunityIcons name="exit-run" size={24} color="white" />
+          }
+          backgroundColor="gray.400"
+        >
+          Abmelden
+        </Button> */}
         {!isUserLoggedIn && (
           <>
             <Button
@@ -102,8 +113,8 @@ export const Settings = (props: SettingsProps) => {
             </Button>
             <Text textAlign="left" mb="3" paddingLeft="10px">
               Mit einem kostenfreien Vulcan-Account kannst du deine Vokabeln und
-              Einstellungen jederzeit synchronisieren. So brauchst du keine
-              Sorgen haben, dass deine wertvollen Daten verloren gehen.
+              Einstellungen jederzeit synchronisieren. So brauchst du dir keine
+              Sorgen machen, dass deine wertvollen Daten verloren gehen.
             </Text>
           </>
         )}

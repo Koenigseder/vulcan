@@ -9,21 +9,85 @@ import {
   ScrollView,
   Divider,
   Button,
+  Alert,
+  Collapse,
 } from "native-base";
-import FontAwesome from "@expo/vector-icons/build/FontAwesome";
-import Foundation from "@expo/vector-icons/build/Foundation";
+import { auth } from "../../../firebase";
 
 export const Login = () => {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
+  const [returnPasswordInput, setReturnPasswordInput] = useState("");
+  const [isOnLogin, setIsOnLogin] = useState(true);
+
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSignUp = () => {
+    const pattern = new RegExp(
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+_!@#$%^&*.,?]).+$"
+    );
+    if (passwordInput !== returnPasswordInput) {
+      setErrorMessage("Das Passwort wurde nicht korrekt wiederholt.");
+      setShowError(true);
+      return;
+    }
+    if (passwordInput.length < 8 || !pattern.test(passwordInput)) {
+      setErrorMessage(
+        `Das Passwort ist zu schwach.\n- Mindestens 8 Zeichen\n- Groß- und Kleinbuchstaben\n- Mindestens eine Nummer\n- Mindestens ein Sonderzeichen`
+      );
+      setShowError(true);
+      return;
+    }
+    auth
+      .createUserWithEmailAndPassword(emailInput, passwordInput)
+      .then((userCredentials: any) => {
+        const user = userCredentials.user;
+        setErrorMessage(user.email);
+        setShowError(true);
+      })
+      .catch((error: any) => {
+        if (error.code === "auth/invalid-email") {
+          setErrorMessage(`"${emailInput}" ist keine gültige E-Mail-Adresse.`);
+        } else if (error.code === "auth/email-already-in-use") {
+          setErrorMessage(`Diese E-Mail-Adresse ist bereits vergeben.`);
+        } else if (error.code === "auth/weak-password") {
+          setErrorMessage(`Das Passwort ist zu schwach.`);
+        } else {
+          setErrorMessage(error.code);
+        }
+        setShowError(true);
+      });
+  };
+
+  const handleSignIn = () => {
+    auth
+      .signInWithEmailAndPassword(emailInput, passwordInput)
+      .then((userCredentials: any) => {
+        const user = userCredentials.user;
+        setErrorMessage(user.password);
+        setShowError(true);
+      })
+      .catch((error: any) => {
+        if (error.code === "auth/user-not-found") {
+          setErrorMessage(`"${emailInput}" ist nicht vorhanden.`);
+        } else if (error.code === "auth/wrong-password") {
+          setErrorMessage(`Das eingegebene Passwort ist falsch.`);
+        } else {
+          setErrorMessage(error.code);
+        }
+        setShowError(true);
+      });
+  };
 
   return (
     <ScrollView>
       <Stack alignItems="center">
-        <Heading
-          size="xl"
-          textAlign="center"
-        >{`Melde dich bei Vulcan an!`}</Heading>
+        <Heading size="xl" textAlign="center">
+          {isOnLogin
+            ? "Melde dich bei Vulcan an!"
+            : "Registriere dich bei Vulcan!"}
+        </Heading>
         <Image
           mt="20px"
           size={150}
@@ -32,10 +96,11 @@ export const Login = () => {
           source={require("../../../assets/Vulcan.png")}
         />
         <Text mt="20px" fontSize="md" textAlign="center">
-          Melde dich bei Vulcan an, um deine Daten zu sichern und zu
-          synchronisieren!
+          {`${isOnLogin ? "Melde" : "Registriere"} dich bei Vulcan${
+            isOnLogin ? " an" : ""
+          }, um deine Daten zu sichern und zu synchronisieren!`}
         </Text>
-        <HStack mt="20px" mb="20px">
+        <HStack mt="20px" mb="3">
           <Input
             flex={0.8}
             placeholder="E-Mail-Adresse"
@@ -48,13 +113,46 @@ export const Login = () => {
           <Input
             flex={0.8}
             placeholder="Passwort"
+            secureTextEntry
             value={passwordInput}
             size="lg"
             onChangeText={(value) => setPasswordInput(value)}
           />
         </HStack>
-        <Button size="lg" bgColor="#ae4951">
-          Anmelden
+        {!isOnLogin && (
+          <HStack mb="3">
+            <Input
+              flex={0.8}
+              placeholder="Wiederhole das Passwort"
+              secureTextEntry
+              value={returnPasswordInput}
+              size="lg"
+              onChangeText={(value) => setReturnPasswordInput(value)}
+            />
+          </HStack>
+        )}
+        <Collapse isOpen={showError}>
+          {showError && (
+            <Alert status="error">
+              <HStack alignItems="center">
+                <Alert.Icon />
+                <Text ml="1">{errorMessage}</Text>
+              </HStack>
+            </Alert>
+          )}
+        </Collapse>
+        <Button
+          mt="3"
+          size="lg"
+          bgColor="#ae4951"
+          isDisabled={
+            emailInput.trim() === "" ||
+            passwordInput.trim() === "" ||
+            (!isOnLogin && returnPasswordInput === "")
+          }
+          onPress={isOnLogin ? handleSignIn : handleSignUp}
+        >
+          {isOnLogin ? "Anmelden" : "Jetzt registrieren!"}
         </Button>
         <HStack alignItems="center">
           <Divider />
@@ -63,11 +161,22 @@ export const Login = () => {
           </Text>
           <Divider />
         </HStack>
-        <Button size="lg" bgColor="#ae4951">
-          Registrieren
+        <Button
+          size="lg"
+          bgColor="#ae4951"
+          onPress={() => {
+            setIsOnLogin(!isOnLogin);
+            setEmailInput("");
+            setPasswordInput("");
+            setReturnPasswordInput("");
+          }}
+        >
+          {isOnLogin ? "Registrieren" : "Anmelden"}
         </Button>
         <Text mt="3" bold>
-          Erstelle einen kostenlosen Vulcan-Account!
+          {isOnLogin
+            ? "Erstelle einen kostenlosen Vulcan-Account!"
+            : "Melde dich mit einem bestehenden Vulcan-Account an!"}
         </Text>
       </Stack>
     </ScrollView>
