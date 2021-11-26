@@ -23,6 +23,7 @@ import {
 import { Learn } from "./package/frontend/pages/Learn";
 import { VocabularyInterface } from "./package/frontend/interfaces/VocabularyInterface";
 import { Introduction } from "./package/frontend/pages/Introduction";
+import { Login } from "./package/frontend/pages/Login";
 
 // Define the config
 const config = {
@@ -33,7 +34,7 @@ const config = {
 
 const Base = () => {
   const { setColorMode } = useColorMode();
-  const [selectedElement, setSelectedElement] = useState(1); // 0 = Vocs; 1 = Home; 2 = Settings; 3 = Learn; 4 = Introduction
+  const [selectedElement, setSelectedElement] = useState(1); // 0 = Vocs; 1 = Home; 2 = Settings; 3 = Learn; 4 = Introduction; 5 = Login
   const [username, setUsername] = useState("");
   const [amountOfVocsPerUnit, setAmountOfVocsPerUnit] = useState(10);
 
@@ -107,6 +108,7 @@ const Base = () => {
             amountOfVocsPerUnit={amountOfVocsPerUnit}
             setAmountOfVocsPerUnit={setAmountOfVocsPerUnit}
             allVocs={allVocs ? allVocs : []}
+            setSelectedElement={setSelectedElement}
           />
         ) : selectedElement === 3 ? (
           <Learn
@@ -115,11 +117,13 @@ const Base = () => {
             setAllVocs={setAllVocs}
             setSelectedElement={setSelectedElement}
           />
-        ) : (
+        ) : selectedElement === 4 ? (
           <Introduction
             setUsername={setUsername}
             setSelectedElement={setSelectedElement}
           />
+        ) : (
+          <Login />
         )}
       </Box>
       <Footer
