@@ -25,6 +25,7 @@ import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 import AntDesign from "@expo/vector-icons/build/AntDesign";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
+import { auth } from "../../../firebase";
 
 interface SettingsProps {
   username: string;
@@ -33,6 +34,8 @@ interface SettingsProps {
   setAmountOfVocsPerUnit: (n: number) => void;
   allVocs: VocabularyInterface[];
   setSelectedElement: (n: number) => void;
+  isUserLoggedIn: boolean;
+  setIsUserLoggedIn: (b: boolean) => void;
 }
 
 export const Settings = (props: SettingsProps) => {
@@ -43,8 +46,6 @@ export const Settings = (props: SettingsProps) => {
   );
   const [selectedColorMode, setSelectedColorMode] = useState(colorMode);
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-
   useEffect(() => {
     if (
       props.amountOfVocsPerUnit === undefined ||
@@ -53,6 +54,16 @@ export const Settings = (props: SettingsProps) => {
       setAmountOfVocsPerUnit(0);
     }
   }, []);
+
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        makeToast("Erfolgreich abgemelden.");
+        props.setIsUserLoggedIn(false);
+      })
+      .catch(() => makeToast("Da ist leider etwas schiefgelaufen"));
+  };
 
   return (
     <Stack paddingBottom="85px">
@@ -74,33 +85,39 @@ export const Settings = (props: SettingsProps) => {
         <HStack alignItems="center" mb="3">
           <HStack flex={1} alignItems="center" paddingLeft="10px" mb="3">
             <AntDesign
-              name={isUserLoggedIn ? "checkcircle" : "exclamationcircle"}
+              name={props.isUserLoggedIn ? "checkcircle" : "exclamationcircle"}
               size={24}
-              color={isUserLoggedIn ? "green" : "orange"}
+              color={props.isUserLoggedIn ? "green" : "orange"}
             />
-            <Text ml="2" color={isUserLoggedIn ? "green.700" : "orange.400"}>
-              {isUserLoggedIn
+            <Text
+              ml="2"
+              color={props.isUserLoggedIn ? "green.700" : "orange.400"}
+            >
+              {props.isUserLoggedIn
                 ? "Du bist erfolgreich eingeloggt."
                 : "Du bist aktuell nicht eingeloggt."}
             </Text>
           </HStack>
-          {isUserLoggedIn && (
+          {props.isUserLoggedIn && (
             <Button>
               <Ionicons name="sync-sharp" size={24} color="black" />
             </Button>
           )}
         </HStack>
-        {/* <Button
-          width="30%"
-          marginLeft="10px"
-          leftIcon={
-            <MaterialCommunityIcons name="exit-run" size={24} color="white" />
-          }
-          backgroundColor="gray.400"
-        >
-          Abmelden
-        </Button> */}
-        {!isUserLoggedIn && (
+        {props.isUserLoggedIn && (
+          <Button
+            width="30%"
+            marginLeft="10px"
+            leftIcon={
+              <MaterialCommunityIcons name="exit-run" size={24} color="white" />
+            }
+            backgroundColor="gray.400"
+            onPress={handleSignOut}
+          >
+            Abmelden
+          </Button>
+        )}
+        {!props.isUserLoggedIn && (
           <>
             <Button
               bgColor="#ae4951"

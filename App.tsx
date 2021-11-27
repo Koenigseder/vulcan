@@ -24,6 +24,7 @@ import { Learn } from "./package/frontend/pages/Learn";
 import { VocabularyInterface } from "./package/frontend/interfaces/VocabularyInterface";
 import { Introduction } from "./package/frontend/pages/Introduction";
 import { Login } from "./package/frontend/pages/Login";
+import { auth } from "./firebase";
 
 // Define the config
 const config = {
@@ -40,6 +41,8 @@ const Base = () => {
 
   const [allVocs, setAllVocs] = useState<VocabularyInterface[]>([]);
   const [isAllVocsLoading, setIsLoading] = useState(true);
+
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
   useEffect(() => {
     getColorMode().then((value: any) =>
@@ -60,6 +63,16 @@ const Base = () => {
       setAllVocs(value);
       setIsLoading(false);
     });
+
+    // Check if user is logged in
+    const unsubscribe = auth.onAuthStateChanged((user: any) => {
+      if (user) {
+        setIsUserLoggedIn(true);
+        // console.log("Logged in as: " + user.uid);
+      }
+    });
+
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
@@ -109,6 +122,8 @@ const Base = () => {
             setAmountOfVocsPerUnit={setAmountOfVocsPerUnit}
             allVocs={allVocs ? allVocs : []}
             setSelectedElement={setSelectedElement}
+            isUserLoggedIn={isUserLoggedIn}
+            setIsUserLoggedIn={setIsUserLoggedIn}
           />
         ) : selectedElement === 3 ? (
           <Learn
@@ -123,7 +138,10 @@ const Base = () => {
             setSelectedElement={setSelectedElement}
           />
         ) : (
-          <Login />
+          <Login
+            setSelectedElement={setSelectedElement}
+            setIsUserLoggedIn={setIsUserLoggedIn}
+          />
         )}
       </Box>
       <Footer

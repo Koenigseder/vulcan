@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Heading,
   Stack,
@@ -14,7 +14,14 @@ import {
 } from "native-base";
 import { auth } from "../../../firebase";
 
-export const Login = () => {
+interface LoginProps {
+  setSelectedElement: (n: number) => void;
+  setIsUserLoggedIn: (b: boolean) => void;
+}
+
+export const Login = (props: LoginProps) => {
+  const { setSelectedElement, setIsUserLoggedIn } = props;
+
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [returnPasswordInput, setReturnPasswordInput] = useState("");
@@ -22,6 +29,16 @@ export const Login = () => {
 
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user: any) => {
+      if (user?.email) {
+        setSelectedElement(2);
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 
   const handleSignUp = () => {
     const pattern = new RegExp(
@@ -41,10 +58,8 @@ export const Login = () => {
     }
     auth
       .createUserWithEmailAndPassword(emailInput, passwordInput)
-      .then((userCredentials: any) => {
-        const user = userCredentials.user;
-        setErrorMessage(user.email);
-        setShowError(true);
+      .then(() => {
+        setIsUserLoggedIn(true);
       })
       .catch((error: any) => {
         if (error.code === "auth/invalid-email") {
@@ -63,10 +78,8 @@ export const Login = () => {
   const handleSignIn = () => {
     auth
       .signInWithEmailAndPassword(emailInput, passwordInput)
-      .then((userCredentials: any) => {
-        const user = userCredentials.user;
-        setErrorMessage(user.password);
-        setShowError(true);
+      .then(() => {
+        setIsUserLoggedIn(true);
       })
       .catch((error: any) => {
         if (error.code === "auth/user-not-found") {
