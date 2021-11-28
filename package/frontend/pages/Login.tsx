@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Entypo } from "@expo/vector-icons";
 import {
   Heading,
   Stack,
@@ -11,6 +12,7 @@ import {
   Button,
   Alert,
   Collapse,
+  Icon,
 } from "native-base";
 import { auth } from "../../../firebase";
 
@@ -29,6 +31,8 @@ export const Login = (props: LoginProps) => {
 
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
@@ -124,9 +128,22 @@ export const Login = (props: LoginProps) => {
         </HStack>
         <HStack mb="3">
           <Input
+            InputRightElement={
+              <Icon
+                mr="2"
+                size="5"
+                color="gray.500"
+                as={
+                  <Entypo
+                    name={isPasswordVisible ? "eye-with-line" : "eye"}
+                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                  />
+                }
+              />
+            }
             flex={0.8}
             placeholder="Passwort"
-            secureTextEntry
+            secureTextEntry={!isPasswordVisible}
             value={passwordInput}
             size="lg"
             onChangeText={(value) => setPasswordInput(value)}
