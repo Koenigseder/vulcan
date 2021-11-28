@@ -10,6 +10,7 @@ import {
   Stack,
   Switch,
   Text,
+  Image,
   useColorMode,
 } from "native-base";
 import React, { useEffect, useState, version } from "react";
@@ -21,6 +22,10 @@ import {
   storeUsername,
 } from "../utils/helper";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
+import AntDesign from "@expo/vector-icons/build/AntDesign";
+import Ionicons from "@expo/vector-icons/build/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
+import { auth } from "../../../firebase";
 
 interface SettingsProps {
   username: string;
@@ -28,6 +33,9 @@ interface SettingsProps {
   amountOfVocsPerUnit: number;
   setAmountOfVocsPerUnit: (n: number) => void;
   allVocs: VocabularyInterface[];
+  setSelectedElement: (n: number) => void;
+  isUserLoggedIn: boolean;
+  setIsUserLoggedIn: (b: boolean) => void;
 }
 
 export const Settings = (props: SettingsProps) => {
@@ -47,19 +55,87 @@ export const Settings = (props: SettingsProps) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (props.amountOfVocsPerUnit > props.allVocs.length) {
-  //     storeAmountOfVocsPerUnit(props.allVocs.length.toString());
-  //     props.setAmountOfVocsPerUnit(props.allVocs.length);
-  //   }
-  // }, []);
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        makeToast("Erfolgreich abgemelden.");
+        props.setIsUserLoggedIn(false);
+      })
+      .catch(() => makeToast("Da ist leider etwas schiefgelaufen"));
+  };
 
   return (
-    <Stack>
+    <Stack paddingBottom="85px">
       <Heading textAlign="center" mb="10" size="xl">
         Einstellungen
       </Heading>
       <ScrollView>
+        <HStack alignItems="center" mb="3">
+          <Image
+            size={10}
+            borderRadius={100}
+            alt="Vulcan Icon"
+            source={require("../../../assets/Vulcan.png")}
+          />
+          <Heading textAlign="left" size="lg" paddingLeft="10px">
+            Dein Vulcan-Account
+          </Heading>
+        </HStack>
+        <HStack alignItems="center" mb="3">
+          <HStack flex={1} alignItems="center" paddingLeft="10px" mb="3">
+            <AntDesign
+              name={props.isUserLoggedIn ? "checkcircle" : "exclamationcircle"}
+              size={24}
+              color={props.isUserLoggedIn ? "green" : "orange"}
+            />
+            <Text
+              ml="2"
+              color={props.isUserLoggedIn ? "green.700" : "orange.400"}
+            >
+              {props.isUserLoggedIn
+                ? "Du bist erfolgreich eingeloggt."
+                : "Du bist aktuell nicht eingeloggt."}
+            </Text>
+          </HStack>
+          {props.isUserLoggedIn && (
+            <Button>
+              <Ionicons name="sync-sharp" size={24} color="black" />
+            </Button>
+          )}
+        </HStack>
+        {props.isUserLoggedIn && (
+          <Button
+            width="30%"
+            marginLeft="10px"
+            leftIcon={
+              <MaterialCommunityIcons name="exit-run" size={24} color="white" />
+            }
+            backgroundColor="gray.400"
+            onPress={handleSignOut}
+          >
+            Abmelden
+          </Button>
+        )}
+        {!props.isUserLoggedIn && (
+          <>
+            <Button
+              bgColor="#ae4951"
+              fontSize="20px"
+              paddingLeft="10px"
+              mb="3"
+              onPress={() => props.setSelectedElement(5)}
+            >
+              Einloggen
+            </Button>
+            <Text textAlign="left" mb="3" paddingLeft="10px">
+              Mit einem kostenfreien Vulcan-Account kannst du deine Vokabeln und
+              Einstellungen jederzeit synchronisieren. So brauchst du dir keine
+              Sorgen machen, dass deine wertvollen Daten verloren gehen.
+            </Text>
+          </>
+        )}
+        <Divider my="3" thickness="1" />
         <Heading textAlign="left" mb="2" size="lg" paddingLeft="10px">
           Benutzername
         </Heading>
