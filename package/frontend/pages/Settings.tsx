@@ -26,6 +26,7 @@ import AntDesign from "@expo/vector-icons/build/AntDesign";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
 import { auth } from "../../../firebase";
+import { getUserData, save } from "../utils/firestoreService";
 
 interface SettingsProps {
   username: string;
@@ -100,7 +101,12 @@ export const Settings = (props: SettingsProps) => {
           </HStack>
           {props.isUserLoggedIn && (
             <Button>
-              <Ionicons name="sync-sharp" size={24} color="black" />
+              <Ionicons
+                name="sync-sharp"
+                size={24}
+                color="black"
+                onPress={() => save()}
+              />
             </Button>
           )}
         </HStack>
