@@ -25,6 +25,9 @@ import { VocabularyInterface } from "./package/frontend/interfaces/VocabularyInt
 import { Introduction } from "./package/frontend/pages/Introduction";
 import { Login } from "./package/frontend/pages/Login";
 import { auth } from "./firebase";
+import { UserDataInterface } from "./package/frontend/interfaces/UserDataInterface";
+import firebase from "firebase";
+import { getUserData } from "./package/frontend/utils/firestoreService";
 
 // Define the config
 const config = {
@@ -34,7 +37,7 @@ const config = {
 };
 
 const Base = () => {
-  const { setColorMode } = useColorMode();
+  const { colorMode, setColorMode } = useColorMode();
   const [selectedElement, setSelectedElement] = useState(1); // 0 = Vocs; 1 = Home; 2 = Settings; 3 = Learn; 4 = Introduction; 5 = Login
   const [username, setUsername] = useState("");
   const [amountOfVocsPerUnit, setAmountOfVocsPerUnit] = useState(10);
@@ -85,6 +88,16 @@ const Base = () => {
     }
   }, [allVocs]);
 
+  const syncUserDataToFirestore = () => {
+    const userData: UserDataInterface = {
+      user_name: username,
+      amount_of_vocs_per_unit: amountOfVocsPerUnit,
+      dark_mode: colorMode === "dark" ? true : false,
+      vocs: [...allVocs],
+      update_time: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+  };
+
   return (
     <>
       <Box
@@ -124,6 +137,7 @@ const Base = () => {
             setSelectedElement={setSelectedElement}
             isUserLoggedIn={isUserLoggedIn}
             setIsUserLoggedIn={setIsUserLoggedIn}
+            syncUserDataToFirestore={syncUserDataToFirestore}
           />
         ) : selectedElement === 3 ? (
           <Learn
