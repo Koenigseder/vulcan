@@ -4,7 +4,6 @@ import {
   Box,
   useColorModeValue,
   useColorMode,
-  extendTheme,
   Spinner,
   Center,
   Heading,
