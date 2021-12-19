@@ -26,7 +26,7 @@ import AntDesign from "@expo/vector-icons/build/AntDesign";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
 import { auth } from "../../../firebase";
-import { getUserData, save } from "../utils/firestoreService";
+import { UserDataInterface } from "../interfaces/UserDataInterface";
 
 interface SettingsProps {
   username: string;
@@ -37,6 +37,7 @@ interface SettingsProps {
   setSelectedElement: (n: number) => void;
   isUserLoggedIn: boolean;
   setIsUserLoggedIn: (b: boolean) => void;
+  saveUserData: () => void;
 }
 
 export const Settings = (props: SettingsProps) => {
@@ -105,7 +106,7 @@ export const Settings = (props: SettingsProps) => {
                 name="sync-sharp"
                 size={24}
                 color="black"
-                onPress={() => save()}
+                onPress={() => props.saveUserData()}
               />
             </Button>
           )}

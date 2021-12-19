@@ -97,6 +97,14 @@ export const getVocs = async () => {
   }
 };
 
+export const setAllVocs = async (vocs: VocabularyInterface) => {
+  try {
+    await AsyncStorage.setItem("VOCABULARY", JSON.stringify(vocs));
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 // add voc to existing vocs
 export const createVoc = async (voc: VocabularyInterface) => {
   try {
@@ -184,6 +192,25 @@ export const editRepeatCountVoc = async (
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
+  }
+};
+
+export const getLastSyncTime = async () => {
+  try {
+    const value = await AsyncStorage.getItem("LAST_SYNC_TIME");
+    if (value !== null) {
+      return parseInt(value);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const storeLastSyncTime = async (value: number) => {
+  try {
+    await AsyncStorage.setItem("LAST_SYNC_TIME", value.toString());
+  } catch (e) {
+    console.log(e);
   }
 };
 

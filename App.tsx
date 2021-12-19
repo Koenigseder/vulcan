@@ -16,6 +16,7 @@ import { Vocs } from "./package/frontend/pages/Vocs";
 import {
   getAmountVocsPerUnit,
   getColorMode,
+  getLastSyncTime,
   getUsername,
   getVocs,
   storeAmountOfVocsPerUnit,
@@ -25,6 +26,11 @@ import { VocabularyInterface } from "./package/frontend/interfaces/VocabularyInt
 import { Introduction } from "./package/frontend/pages/Introduction";
 import { Login } from "./package/frontend/pages/Login";
 import { auth } from "./firebase";
+import { UserDataInterface } from "./package/frontend/interfaces/UserDataInterface";
+import {
+  getUserDataFromFirestore,
+  saveUserDataToFirestore,
+} from "./package/frontend/utils/firestoreService";
 
 // Define the config
 const config = {
@@ -34,24 +40,54 @@ const config = {
 };
 
 const Base = () => {
-  const { setColorMode } = useColorMode();
+  const { colorMode, setColorMode } = useColorMode();
   const [selectedElement, setSelectedElement] = useState(1); // 0 = Vocs; 1 = Home; 2 = Settings; 3 = Learn; 4 = Introduction; 5 = Login
   const [username, setUsername] = useState("");
   const [amountOfVocsPerUnit, setAmountOfVocsPerUnit] = useState(10);
+  const [lastSyncTime, setLastSyncTime] = useState(0);
 
   const [allVocs, setAllVocs] = useState<VocabularyInterface[]>([]);
   const [isAllVocsLoading, setIsLoading] = useState(true);
 
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
+  const saveUserData = () => {
+    const data: UserDataInterface = {
+      amount_of_vocs: amountOfVocsPerUnit,
+      dark_mode: colorMode === "dark" ? true : false,
+      update_time: new Date().getTime(),
+      user_name: username,
+      vocs: allVocs,
+    };
+
+    saveUserDataToFirestore(data);
+  };
+
+  const getUserData = async () => {
+    const userData = await getUserDataFromFirestore();
+    return userData;
+  };
+
+  const syncWithFirestore = () => {
+    setTimeout(() => {
+      // ToDo - sync function
+    }, 10000);
+  };
+
   useEffect(() => {
+    getLastSyncTime().then((value: number | undefined) =>
+      setLastSyncTime(value === undefined ? 0 : value)
+    );
+
     getColorMode().then((value: any) =>
       setColorMode(value === null ? "light" : value)
     );
+
     getUsername().then((value: any) => {
       setUsername(value);
       if (value === undefined || value === null) setSelectedElement(4);
     });
+
     getAmountVocsPerUnit().then((value: any) => {
       if (value === null || value === undefined) {
         setAmountOfVocsPerUnit(0);
@@ -59,6 +95,7 @@ const Base = () => {
         setAmountOfVocsPerUnit(Math.floor(value));
       }
     });
+
     getVocs().then((value: any) => {
       setAllVocs(value);
       setIsLoading(false);
@@ -124,6 +161,7 @@ const Base = () => {
             setSelectedElement={setSelectedElement}
             isUserLoggedIn={isUserLoggedIn}
             setIsUserLoggedIn={setIsUserLoggedIn}
+            saveUserData={getUserData}
           />
         ) : selectedElement === 3 ? (
           <Learn
