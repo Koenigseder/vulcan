@@ -11,7 +11,7 @@ interface VocCardProps {
   repeated_without_mistake: number | null;
 }
 
-export const VocCard = (props: VocCardProps) => {
+export const VocCard = (props: VocCardProps): JSX.Element => {
   return (
     <Box
       bg={{

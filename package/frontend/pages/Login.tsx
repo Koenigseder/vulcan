@@ -72,6 +72,8 @@ export const Login = (props: LoginProps) => {
           setErrorMessage(`Diese E-Mail-Adresse ist bereits vergeben.`);
         } else if (error.code === "auth/weak-password") {
           setErrorMessage(`Das Passwort ist zu schwach.`);
+        } else if (error.code === "auth/network-request-failed") {
+          setErrorMessage(`Keine Internetverbindung.`);
         } else {
           setErrorMessage(error.code);
         }
@@ -90,6 +92,10 @@ export const Login = (props: LoginProps) => {
           setErrorMessage(`"${emailInput}" ist nicht vorhanden.`);
         } else if (error.code === "auth/wrong-password") {
           setErrorMessage(`Das eingegebene Passwort ist falsch.`);
+        } else if (error.code === "auth/invalid-email") {
+          setErrorMessage(`"${emailInput}" ist keine gültige E-Mail-Adresse.`);
+        } else if (error.code === "auth/network-request-failed") {
+          setErrorMessage(`Keine Internetverbindung.`);
         } else {
           setErrorMessage(error.code);
         }

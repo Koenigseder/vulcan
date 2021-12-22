@@ -15,10 +15,16 @@ import { Vocs } from "./package/frontend/pages/Vocs";
 import {
   getAmountVocsPerUnit,
   getColorMode,
-  getLastSyncTime,
+  getLastEditTime,
   getUsername,
   getVocs,
+  lastEditTime,
+  makeToast,
+  storeAllVocs,
   storeAmountOfVocsPerUnit,
+  storeColorMode,
+  storeLastEditTime,
+  storeUsername,
 } from "./package/frontend/utils/helper";
 import { Learn } from "./package/frontend/pages/Learn";
 import { VocabularyInterface } from "./package/frontend/interfaces/VocabularyInterface";
@@ -42,41 +48,99 @@ const Base = () => {
   const { colorMode, setColorMode } = useColorMode();
   const [selectedElement, setSelectedElement] = useState(1); // 0 = Vocs; 1 = Home; 2 = Settings; 3 = Learn; 4 = Introduction; 5 = Login
   const [username, setUsername] = useState("");
-  const [amountOfVocsPerUnit, setAmountOfVocsPerUnit] = useState(10);
-  const [lastSyncTime, setLastSyncTime] = useState(0);
+  const [amountOfVocsPerUnit, setAmountOfVocsPerUnit] = useState(0);
 
   const [allVocs, setAllVocs] = useState<VocabularyInterface[]>([]);
   const [isAllVocsLoading, setIsLoading] = useState(true);
 
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
-  const saveUserData = () => {
-    const data: UserDataInterface = {
+  const storeUserDataFromFirestoreToLocal = async () => {
+    const userData = await getUserDataFromFirestore();
+
+    if (userData) {
+      setAmountOfVocsPerUnit(userData.amount_of_vocs);
+      setColorMode(userData.dark_mode ? "dark" : "light");
+      setUsername(userData.user_name);
+      setAllVocs(userData.vocs);
+
+      try {
+        storeAmountOfVocsPerUnit(userData.amount_of_vocs.toString());
+        storeColorMode(userData.dark_mode ? "dark" : "light");
+        storeUsername(userData.user_name);
+        storeAllVocs(userData.vocs);
+
+        storeLastEditTime(true, userData.update_time);
+
+        makeToast("Daten erfolgreich synchronisiert.");
+      } catch (error) {
+        makeToast("Da ist leider etwas schiefgelaufen...");
+      }
+    }
+  };
+
+  const storeUserDataFromLocalToFirestore = () => {
+    const userData: UserDataInterface = {
       amount_of_vocs: amountOfVocsPerUnit,
       dark_mode: colorMode === "dark" ? true : false,
-      update_time: new Date().getTime(),
+      update_time: lastEditTime,
       user_name: username,
       vocs: allVocs,
     };
 
-    saveUserDataToFirestore(data);
+    saveUserDataToFirestore(userData);
   };
 
-  const getUserData = async () => {
-    const userData = await getUserDataFromFirestore();
-    return userData;
-  };
+  // const saveUserDataFromLocalToFirestore = () => {
+  //   const data: UserDataInterface = {
+  //     amount_of_vocs: amountOfVocsPerUnit,
+  //     dark_mode: colorMode === "dark" ? true : false,
+  //     update_time: lastEditTime,
+  //     user_name: username,
+  //     vocs: allVocs,
+  //   };
 
-  const syncWithFirestore = () => {
-    setTimeout(() => {
-      // ToDo - sync function
-    }, 10000);
-  };
+  //   console.log(data);
+
+  //   saveUserDataToFirestore(data);
+
+  //   console.log("saveUserDataToFirestore");
+  // };
+
+  // const saveUserDataFromFirestoreToLocal = (userData: UserDataInterface) => {
+  //   setAmountOfVocsPerUnit(userData.amount_of_vocs);
+  //   setColorMode(userData.dark_mode ? "dark" : "light");
+  //   setUsername(userData.user_name);
+  //   setAllVocs(userData.vocs);
+
+  //   storeAmountOfVocsPerUnit(userData.amount_of_vocs.toString());
+  //   storeColorMode(userData.dark_mode ? "dark" : "light");
+  //   storeUsername(userData.user_name);
+  //   storeAllVocs(userData.vocs);
+
+  //   storeLastEditTime(true, userData.update_time);
+
+  //   console.log("saveUserDataFromFirestoreToLocal");
+  // };
+
+  // const syncWithFirestore = async () => {
+  //   const userData = await getUserDataFromFirestore();
+  //   setTimeout(() => {
+  //     if (userData) {
+  //       if (userData.update_time < lastEditTime) {
+  //         saveUserDataFromLocalToFirestore();
+  //       } else if (userData.update_time > lastEditTime) {
+  //         saveUserDataFromFirestoreToLocal(userData);
+  //       }
+  //     } else {
+  //       saveUserDataFromLocalToFirestore();
+  //     }
+  //     syncWithFirestore();
+  //   }, 15000);
+  // };
 
   useEffect(() => {
-    getLastSyncTime().then((value: number | undefined) =>
-      setLastSyncTime(value === undefined ? 0 : value)
-    );
+    getLastEditTime();
 
     getColorMode().then((value: any) =>
       setColorMode(value === null ? "light" : value)
@@ -104,7 +168,7 @@ const Base = () => {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
       if (user) {
         setIsUserLoggedIn(true);
-        // console.log("Logged in as: " + user.uid);
+        //syncWithFirestore();
       }
     });
 
@@ -160,7 +224,8 @@ const Base = () => {
             setSelectedElement={setSelectedElement}
             isUserLoggedIn={isUserLoggedIn}
             setIsUserLoggedIn={setIsUserLoggedIn}
-            saveUserData={getUserData}
+            saveUserDataToFirestore={storeUserDataFromLocalToFirestore}
+            getUserDataFromFirestore={storeUserDataFromFirestoreToLocal}
           />
         ) : selectedElement === 3 ? (
           <Learn

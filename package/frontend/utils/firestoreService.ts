@@ -1,5 +1,6 @@
 import { auth, database } from "../../../firebase";
 import { UserDataInterface } from "../interfaces/UserDataInterface";
+import { makeToast } from "./helper";
 
 export const getUserDataFromFirestore = async () => {
   const docRef = database.collection("user_data").doc(auth.currentUser?.uid);
@@ -29,9 +30,10 @@ export const saveUserDataToFirestore = (userData: UserDataInterface) => {
     .doc(auth.currentUser?.uid)
     .set(userData)
     .then(() => {
-      console.log("Document written");
+      makeToast("Daten erfolgreich synchronisiert.");
     })
     .catch((error) => {
-      console.error("Error saving document: ", error);
+      makeToast("Da ist leider etwas schiefgelaufen...");
+      console.log(error);
     });
 };
