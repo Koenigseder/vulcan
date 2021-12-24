@@ -5,7 +5,7 @@ import { makeToast } from "./helper";
 export const getUserDataFromFirestore = async () => {
   const docRef = database.collection("user_data").doc(auth.currentUser?.uid);
 
-  let docData;
+  let docData = null;
 
   await docRef
     .get()

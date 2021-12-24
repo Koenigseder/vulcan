@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { LogBox } from "react-native";
 import {
   NativeBaseProvider,
   Box,
@@ -36,6 +37,9 @@ import {
   getUserDataFromFirestore,
   saveUserDataToFirestore,
 } from "./package/frontend/utils/firestoreService";
+
+LogBox.ignoreLogs(["Setting a timer"]);
+LogBox.ignoreLogs(["NativeBase: The contrast ratio of 1:1"]);
 
 // Define the config
 const config = {
@@ -90,54 +94,6 @@ const Base = () => {
 
     saveUserDataToFirestore(userData);
   };
-
-  // const saveUserDataFromLocalToFirestore = () => {
-  //   const data: UserDataInterface = {
-  //     amount_of_vocs: amountOfVocsPerUnit,
-  //     dark_mode: colorMode === "dark" ? true : false,
-  //     update_time: lastEditTime,
-  //     user_name: username,
-  //     vocs: allVocs,
-  //   };
-
-  //   console.log(data);
-
-  //   saveUserDataToFirestore(data);
-
-  //   console.log("saveUserDataToFirestore");
-  // };
-
-  // const saveUserDataFromFirestoreToLocal = (userData: UserDataInterface) => {
-  //   setAmountOfVocsPerUnit(userData.amount_of_vocs);
-  //   setColorMode(userData.dark_mode ? "dark" : "light");
-  //   setUsername(userData.user_name);
-  //   setAllVocs(userData.vocs);
-
-  //   storeAmountOfVocsPerUnit(userData.amount_of_vocs.toString());
-  //   storeColorMode(userData.dark_mode ? "dark" : "light");
-  //   storeUsername(userData.user_name);
-  //   storeAllVocs(userData.vocs);
-
-  //   storeLastEditTime(true, userData.update_time);
-
-  //   console.log("saveUserDataFromFirestoreToLocal");
-  // };
-
-  // const syncWithFirestore = async () => {
-  //   const userData = await getUserDataFromFirestore();
-  //   setTimeout(() => {
-  //     if (userData) {
-  //       if (userData.update_time < lastEditTime) {
-  //         saveUserDataFromLocalToFirestore();
-  //       } else if (userData.update_time > lastEditTime) {
-  //         saveUserDataFromFirestoreToLocal(userData);
-  //       }
-  //     } else {
-  //       saveUserDataFromLocalToFirestore();
-  //     }
-  //     syncWithFirestore();
-  //   }, 15000);
-  // };
 
   useEffect(() => {
     getLastEditTime();

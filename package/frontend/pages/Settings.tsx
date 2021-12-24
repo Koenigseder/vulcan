@@ -20,6 +20,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import {
+  lastEditTime,
   makeToast,
   storeAmountOfVocsPerUnit,
   storeColorMode,
@@ -167,7 +168,14 @@ export const Settings = (props: SettingsProps) => {
       setAmountOfVocsPerUnit(0);
     }
 
-    getFirestoreUpdateTime();
+    // Check if user is logged in
+    const unsubscribe = auth.onAuthStateChanged((user: any) => {
+      if (user) {
+        getFirestoreUpdateTime();
+      }
+    });
+
+    return unsubscribe;
   }, []);
 
   const handleSignOut = () => {
@@ -206,42 +214,44 @@ export const Settings = (props: SettingsProps) => {
             Dein Vulcan-Account
           </Heading>
         </HStack>
-        <HStack alignItems="center" mb="3">
-          <HStack flex={1} alignItems="center" paddingLeft="10px" mb="3">
-            <AntDesign
-              name={props.isUserLoggedIn ? "checkcircle" : "exclamationcircle"}
-              size={24}
-              color={props.isUserLoggedIn ? "green" : "orange"}
-            />
-            <Text
-              ml="2"
-              color={props.isUserLoggedIn ? "green.700" : "orange.400"}
-            >
-              {props.isUserLoggedIn
-                ? "Du bist erfolgreich eingeloggt."
-                : "Du bist aktuell nicht eingeloggt."}
-            </Text>
+        <VStack alignItems="center" mb="3" paddingLeft="10px">
+          <HStack alignItems="center">
+            <HStack flex={1} alignItems="center">
+              <AntDesign
+                name={
+                  props.isUserLoggedIn ? "checkcircle" : "exclamationcircle"
+                }
+                size={24}
+                color={props.isUserLoggedIn ? "green" : "orange"}
+              />
+              <Text
+                ml="2"
+                color={props.isUserLoggedIn ? "green.700" : "orange.400"}
+              >
+                {props.isUserLoggedIn
+                  ? "Du bist erfolgreich eingeloggt."
+                  : "Du bist aktuell nicht eingeloggt."}
+              </Text>
+            </HStack>
+            {props.isUserLoggedIn && (
+              <Button
+                marginLeft="10px"
+                leftIcon={
+                  <MaterialCommunityIcons
+                    name="exit-run"
+                    size={24}
+                    color="white"
+                  />
+                }
+                backgroundColor="gray.400"
+                onPress={() => {
+                  setAction(actionEnum.SIGN_OUT);
+                  setNoteModalVisible(true);
+                }}
+              />
+            )}
           </HStack>
-          {props.isUserLoggedIn && (
-            <Button
-              marginLeft="10px"
-              leftIcon={
-                <MaterialCommunityIcons
-                  name="exit-run"
-                  size={24}
-                  color="white"
-                />
-              }
-              backgroundColor="gray.400"
-              onPress={() => {
-                setAction(actionEnum.SIGN_OUT);
-                setNoteModalVisible(true);
-              }}
-            >
-              Abmelden
-            </Button>
-          )}
-        </HStack>
+        </VStack>
         {props.isUserLoggedIn && (
           <VStack>
             <Text alignSelf="center" mb="10px" fontSize="15px">
@@ -249,6 +259,7 @@ export const Settings = (props: SettingsProps) => {
             </Text>
             <HStack justifyContent="center" space={2}>
               <Button
+                isDisabled={lastEditTime === 0}
                 onPress={() => {
                   setAction(actionEnum.STORE_TO_FIRESTORE);
                   setNoteModalVisible(true);
@@ -261,6 +272,7 @@ export const Settings = (props: SettingsProps) => {
                 Daten sichern
               </Button>
               <Button
+                isDisabled={firestoreUpdateTime === null}
                 onPress={() => {
                   setAction(actionEnum.STORE_TO_LOCAL);
                   setNoteModalVisible(true);

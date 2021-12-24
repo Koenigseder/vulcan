@@ -162,17 +162,11 @@ export const Vocs = (props: VocsProps) => {
             variant="filled"
             borderRadius="20"
             InputLeftElement={
-              <Icon
-                ml="2"
-                size="5"
-                color="gray.500"
-                as={<Ionicons name="search" />}
-              />
+              <Icon ml="2" size="5" as={<Ionicons name="search" />} />
             }
             InputRightElement={
               <Text
                 mr="10px"
-                color="gray.500"
                 onPress={() => {
                   setInputSearch("");
                   setVocs(allVocs);

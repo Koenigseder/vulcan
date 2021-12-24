@@ -20,6 +20,7 @@ export const getUsername = async () => {
     if (value !== null) {
       return value;
     }
+    return null;
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
@@ -44,6 +45,7 @@ export const getAmountVocsPerUnit = async () => {
     if (value !== null) {
       return value;
     }
+    return null;
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
@@ -68,6 +70,7 @@ export const getColorMode = async () => {
     if (value !== null) {
       return value;
     }
+    return false;
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
@@ -96,6 +99,7 @@ export const getVocs = async () => {
       value = JSON.parse(value);
       return value;
     }
+    return null;
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
