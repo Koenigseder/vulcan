@@ -125,6 +125,7 @@ export const Login = (props: LoginProps) => {
         </Text>
         <HStack mt="20px" mb="3">
           <Input
+            keyboardType="email-address"
             flex={0.8}
             placeholder="E-Mail-Adresse"
             value={emailInput}

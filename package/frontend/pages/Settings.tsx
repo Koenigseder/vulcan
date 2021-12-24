@@ -353,7 +353,24 @@ export const Settings = (props: SettingsProps) => {
               Wie viele Wörter sollen in einer Lernsession abgefragt werden?
             </Text>
             <HStack display="flex" alignItems="center" space="sm">
-              <Text paddingLeft="5px">{amountOfVocsPerUnit}</Text>
+              <Input
+                textAlign="center"
+                keyboardType="number-pad"
+                paddingLeft="5px"
+                value={amountOfVocsPerUnit.toString()}
+                onChangeText={(value: string) => {
+                  let inputNumber;
+                  if (!value || parseInt(value) < 0) {
+                    inputNumber = 0;
+                  } else if (parseInt(value) > props.allVocs?.length) {
+                    inputNumber = props.allVocs?.length;
+                  } else {
+                    inputNumber = parseInt(value);
+                  }
+                  setAmountOfVocsPerUnit(inputNumber);
+                }}
+              />
+              {/* <Text paddingLeft="5px">{amountOfVocsPerUnit}</Text> */}
               <Slider
                 flex={1}
                 value={amountOfVocsPerUnit}
