@@ -124,7 +124,6 @@ const Base = () => {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
       if (user) {
         setIsUserLoggedIn(true);
-        //syncWithFirestore();
       }
     });
 

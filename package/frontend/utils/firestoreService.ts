@@ -37,3 +37,26 @@ export const saveUserDataToFirestore = (userData: UserDataInterface) => {
       console.log(error);
     });
 };
+
+export const getFirestoreUpdateTime = async () => {
+  const docRef = database.collection("user_data").doc(auth.currentUser?.uid);
+
+  let updateTime = null;
+
+  await docRef
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const docData = doc.data();
+        updateTime = docData?.update_time;
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting document:", error);
+    });
+
+  return updateTime;
+};

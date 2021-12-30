@@ -30,8 +30,6 @@ import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 import AntDesign from "@expo/vector-icons/build/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
 import { auth } from "../../../firebase";
-import { getUserDataFromFirestore } from "../utils/firestoreService";
-import moment from "moment";
 
 enum actionEnum {
   SIGN_OUT = "SIGN_OUT",
@@ -59,7 +57,6 @@ interface NoteProps {
   handleSignout: () => void;
   getUserDataFromFirestore: () => void;
   saveUserDataToFirestore: () => void;
-  setTime: () => void;
 }
 
 const Note = (props: NoteProps) => {
@@ -118,9 +115,6 @@ const Note = (props: NoteProps) => {
                     ? props.saveUserDataToFirestore()
                     : props.getUserDataFromFirestore();
 
-                  props.action === actionEnum.STORE_TO_FIRESTORE &&
-                    props.setTime();
-
                   props.setModalVisible(false);
                 }}
               >
@@ -146,19 +140,6 @@ export const Settings = (props: SettingsProps) => {
 
   const [noteModalVisible, setNoteModalVisible] = useState(false);
   const [action, setAction] = useState<actionEnum>();
-  const [firestoreUpdateTime, setFirestoreUpdateTime] = useState(null);
-
-  const getFirestoreUpdateTime = async () => {
-    const userData = await getUserDataFromFirestore();
-
-    let date = null;
-    if (userData?.update_time) {
-      date = new Date(userData.update_time);
-      date = moment(date).locale("de").format("DD.MM.YYYY HH:mm:ss");
-    }
-
-    setFirestoreUpdateTime(date);
-  };
 
   useEffect(() => {
     if (
@@ -167,15 +148,6 @@ export const Settings = (props: SettingsProps) => {
     ) {
       setAmountOfVocsPerUnit(0);
     }
-
-    // Check if user is logged in
-    const unsubscribe = auth.onAuthStateChanged((user: any) => {
-      if (user) {
-        getFirestoreUpdateTime();
-      }
-    });
-
-    return unsubscribe;
   }, []);
 
   const handleSignOut = () => {
@@ -197,7 +169,6 @@ export const Settings = (props: SettingsProps) => {
         handleSignout={handleSignOut}
         saveUserDataToFirestore={props.saveUserDataToFirestore}
         getUserDataFromFirestore={props.getUserDataFromFirestore}
-        setTime={getFirestoreUpdateTime}
       />
       <Heading textAlign="center" mb="10" size="xl">
         Einstellungen
@@ -272,7 +243,7 @@ export const Settings = (props: SettingsProps) => {
                 Daten sichern
               </Button>
               <Button
-                isDisabled={firestoreUpdateTime === null}
+                isDisabled
                 onPress={() => {
                   setAction(actionEnum.STORE_TO_LOCAL);
                   setNoteModalVisible(true);
@@ -285,11 +256,6 @@ export const Settings = (props: SettingsProps) => {
                 Daten abrufen
               </Button>
             </HStack>
-            {firestoreUpdateTime !== null && (
-              <Text alignSelf="center" mt="10px">
-                {`Datenstand Cloud: ${firestoreUpdateTime}`}
-              </Text>
-            )}
           </VStack>
         )}
         {!props.isUserLoggedIn && (
@@ -370,7 +336,6 @@ export const Settings = (props: SettingsProps) => {
                   setAmountOfVocsPerUnit(inputNumber);
                 }}
               />
-              {/* <Text paddingLeft="5px">{amountOfVocsPerUnit}</Text> */}
               <Slider
                 flex={1}
                 value={amountOfVocsPerUnit}
