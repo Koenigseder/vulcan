@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "native-base";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 
+export let lastEditTime = 0;
+
 // function that generates a Toast
 export const makeToast = (message: string) => {
   Toast.show({
@@ -18,6 +20,7 @@ export const getUsername = async () => {
     if (value !== null) {
       return value;
     }
+    return null;
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
@@ -28,6 +31,7 @@ export const getUsername = async () => {
 export const storeUsername = async (value: string) => {
   try {
     await AsyncStorage.setItem("USERNAME", value);
+    storeLastEditTime(false);
   } catch (e) {
     console.log(e);
     makeToast("Benutzername konnte nicht gespeichert werden.");
@@ -41,6 +45,7 @@ export const getAmountVocsPerUnit = async () => {
     if (value !== null) {
       return value;
     }
+    return null;
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
@@ -51,6 +56,7 @@ export const getAmountVocsPerUnit = async () => {
 export const storeAmountOfVocsPerUnit = async (value: string) => {
   try {
     await AsyncStorage.setItem("AMOUNT_OF_VOCS_PER_UNIT", value);
+    storeLastEditTime(false);
   } catch (e) {
     console.log(e);
     makeToast("Anzahl konnte nicht gespeichert werden.");
@@ -64,6 +70,7 @@ export const getColorMode = async () => {
     if (value !== null) {
       return value;
     }
+    return false;
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
@@ -77,6 +84,7 @@ export const storeColorMode = async (value: "dark" | "light" | undefined) => {
       "COLORMODE",
       value === undefined ? "light" : value
     );
+    storeLastEditTime(false);
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
@@ -91,9 +99,19 @@ export const getVocs = async () => {
       value = JSON.parse(value);
       return value;
     }
+    return null;
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
+  }
+};
+
+export const storeAllVocs = async (vocs: VocabularyInterface[]) => {
+  try {
+    await AsyncStorage.setItem("VOCABULARY", JSON.stringify(vocs));
+    storeLastEditTime(false);
+  } catch (e) {
+    console.log(e);
   }
 };
 
@@ -125,6 +143,7 @@ export const createVoc = async (voc: VocabularyInterface) => {
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(newVoc));
       makeToast("Vokabel erfolgreich gespeichert!");
     }
+    storeLastEditTime(false);
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
@@ -145,6 +164,7 @@ export const editVoc = async (voc: VocabularyInterface, index: number) => {
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
       makeToast("Vokabel erfolgreich gespeichert!");
     }
+    storeLastEditTime(false);
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
@@ -161,6 +181,7 @@ export const deleteVoc = async (index: number) => {
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
       makeToast("Vokabel erfolgreich gelöscht!");
     }
+    storeLastEditTime(false);
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
@@ -181,9 +202,34 @@ export const editRepeatCountVoc = async (
       };
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
     }
+    storeLastEditTime(false);
   } catch (e) {
     console.log(e);
     makeToast("Da ist leider etwas schiefgelaufen...");
+  }
+};
+
+export const getLastEditTime = async () => {
+  try {
+    const value = await AsyncStorage.getItem("LAST_EDIT_TIME");
+    if (value !== null) {
+      lastEditTime = parseInt(value);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const storeLastEditTime = async (
+  fromFirestore: boolean,
+  time?: number
+) => {
+  try {
+    const timestamp = fromFirestore ? time : new Date().getTime();
+    await AsyncStorage.setItem("LAST_EDIT_TIME", timestamp.toString());
+    lastEditTime = timestamp;
+  } catch (e) {
+    console.log(e);
   }
 };
 
@@ -191,8 +237,8 @@ export const editRepeatCountVoc = async (
 export const removeItem = async (key: string, message?: string) => {
   try {
     await AsyncStorage.removeItem(key);
-    console.log(message);
     makeToast(message || "Erfolgreich gelöscht!");
+    storeLastEditTime(false);
   } catch (e) {
     console.log("removeItem");
     makeToast("Etwas ist schiefgelaufen...");
