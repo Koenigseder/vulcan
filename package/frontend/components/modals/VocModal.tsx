@@ -14,7 +14,7 @@ interface VocModalProps {
   editVoc: (voc: VocabularyInterface, index: number) => void;
 }
 
-export const VocModal = (props: VocModalProps) => {
+export const VocModal = (props: VocModalProps): JSX.Element => {
   const [inputForeignWord, setInputForeignWord] = useState("");
   const [inputKnownWord, setInputKnownWord] = useState("");
 
