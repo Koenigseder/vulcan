@@ -39,7 +39,7 @@ export const VocCard = (props: VocCardProps): JSX.Element => {
                   props.repeated_without_mistake === null ||
                   props.repeated_without_mistake === undefined
                     ? "red"
-                    : props.repeated_without_mistake < 8
+                    : props.repeated_without_mistake < 5
                     ? "orange"
                     : "green"
                 }

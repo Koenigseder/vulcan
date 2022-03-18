@@ -29,12 +29,12 @@ export const Home = (props: HomeProps) => {
     const resultOrange = props.allVocs.filter(
       (value: VocabularyInterface) =>
         value.repeated_without_mistake !== null &&
-        value.repeated_without_mistake < 8
+        value.repeated_without_mistake < 5
     );
     const resultGreen = props.allVocs.filter(
       (value: VocabularyInterface) =>
         value.repeated_without_mistake !== null &&
-        value.repeated_without_mistake >= 8
+        value.repeated_without_mistake >= 5
     );
     if (resultRed.length >= resultOrange.length && resultRed >= resultGreen) {
       return "Die meisten Vokabeln wurden noch nicht geübt.";

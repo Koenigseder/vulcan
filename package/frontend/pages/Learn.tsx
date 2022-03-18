@@ -30,12 +30,12 @@ export const Learn = (props: LearnProps) => {
     const resultOrange = allVocs.filter(
       (value: VocabularyInterface) =>
         value.repeated_without_mistake !== null &&
-        value.repeated_without_mistake < 8
+        value.repeated_without_mistake < 5
     );
     const resultGreen = allVocs.filter(
       (value: VocabularyInterface) =>
         value.repeated_without_mistake !== null &&
-        value.repeated_without_mistake >= 8
+        value.repeated_without_mistake >= 5
     );
 
     for (let i = 1; i <= vocsPerUnit; i++) {
