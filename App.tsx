@@ -144,7 +144,7 @@ const Base = () => {
     <>
       <Box
         flex={1}
-        bg={useColorModeValue("white", "black")}
+        bg={useColorModeValue("white", "dark.50")}
         paddingTop="75px"
         paddingLeft="20px"
         paddingRight="20px"
