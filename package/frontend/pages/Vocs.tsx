@@ -13,14 +13,14 @@ import {
   Spinner,
   Stack,
   Text,
-  VStack,
 } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
-import { VocCard } from "../cards/VocCard";
+import { VocCard } from "../components/cards/VocCard";
 import { VocModal } from "../components/modals/VocModal";
 import { createVoc, deleteVoc, editVoc } from "../utils/helper";
 import { TouchableOpacity } from "react-native";
+import { QueryModes } from "../enums/QueryModesEnum";
 
 interface VocsProps {
   allVocs: VocabularyInterface[];
@@ -49,16 +49,23 @@ export const Vocs = (props: VocsProps) => {
     createVoc({ ...voc }).then(() => {
       setModalVisible(false);
       if (allVocs === null || allVocs.length === 0) {
-        setAllVocs([{ ...voc, id: 0, repeated_without_mistake: null }]);
-      } else {
         setAllVocs([
-          ...allVocs,
           {
             ...voc,
-            id: allVocs[allVocs.length - 1].id + 1,
+            id: 0,
             repeated_without_mistake: null,
+            last_voc_side_queried: QueryModes.knownWord,
           },
         ]);
+      } else {
+        const newList = [...allVocs];
+        newList.push({
+          ...voc,
+          id: newList[newList.length - 1].id + 1,
+          repeated_without_mistake: null,
+          last_voc_side_queried: QueryModes.knownWord,
+        });
+        setAllVocs(newList);
       }
     });
   };
@@ -67,11 +74,8 @@ export const Vocs = (props: VocsProps) => {
     editVoc({ ...voc }, index).then(() => {
       setModalVisible(false);
       const newList = [...allVocs];
-      newList[index] = {
-        ...allVocs[index],
-        foreign_word: voc.foreign_word,
-        known_word: voc.known_word,
-      };
+      newList[index].foreign_word = voc.foreign_word;
+      newList[index].known_word = voc.known_word;
       setAllVocs(newList);
       setVocs(newList);
       setInputSearch("");

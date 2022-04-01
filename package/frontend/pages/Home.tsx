@@ -53,7 +53,7 @@ export const Home = (props: HomeProps) => {
 
   return (
     <>
-      <Stack>
+      <Stack flex={1}>
         <Heading textAlign="center" mb="10" size="xl">
           Home
         </Heading>
@@ -61,13 +61,13 @@ export const Home = (props: HomeProps) => {
           {`Hallo ${props.username}, schön dich wiederzusehen!`}
         </Heading>
         <Divider my="3" thickness="1" />
-        <ScrollView height="72%">
+        <ScrollView>
           <Heading textAlign="center" mb="2" size="md" paddingLeft="10px">
             Hier sind deine Statistiken:
           </Heading>
           {resultRed || resultOrange || resultGreen ? (
             <>
-              <Center>
+              <Center marginTop="-30px">
                 <VictoryPie
                   data={[
                     ...(resultRed
@@ -90,7 +90,6 @@ export const Home = (props: HomeProps) => {
                   style={{
                     labels: { fill: "white", fontSize: 20, fontWeight: "bold" },
                   }}
-                  // radius={150}
                 />
               </Center>
               <HStack justifyContent="center" space={4} flexDirection="row">
