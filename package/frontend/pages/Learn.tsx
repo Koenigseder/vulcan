@@ -1,5 +1,5 @@
 import { Entypo } from "@expo/vector-icons";
-import Ionicons from "@expo/vector-icons/build/Ionicons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import {
   Box,
   Button,
@@ -7,12 +7,14 @@ import {
   Heading,
   HStack,
   Icon,
+  Modal,
   Progress,
-  Spinner,
   Text,
+  useColorMode,
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
+import { HelpModal } from "../components/modals/HelpModal";
 import { QueryModes } from "../enums/QueryModesEnum";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 import { editVocRepeatCountAndLastSideQueried } from "../utils/helper";
@@ -26,6 +28,10 @@ interface LearnProps {
 
 export const Learn = (props: LearnProps) => {
   const { allVocs, setAllVocs, vocsPerUnit, setSelectedElement } = props;
+
+  const { colorMode } = useColorMode();
+
+  const [showHelp, setShowHelp] = useState<boolean>(false);
 
   const [queryMode, setQueryMode] = useState<QueryModes | null>(null);
 
@@ -77,10 +83,6 @@ export const Learn = (props: LearnProps) => {
     correct: boolean,
     lastSideQueriedValue: QueryModes.foreignWord | QueryModes.knownWord
   ) => {
-    // if (currentVocIndex + 1 >= vocsPerUnit) {
-    //   setCurrentVocIndex(currentVocIndex + 1);
-    //   return;
-    // }
     if (correct) {
       const index = allVocs.findIndex(
         (voc) => voc.id === vocListForUnit[currentVocIndex].id
@@ -141,63 +143,110 @@ export const Learn = (props: LearnProps) => {
   }, []);
 
   return (
-    <VStack flex={1} alignItems="center" marginBottom="50px">
-      {queryMode === null ? (
-        <Center flex={1}>
-          <Heading color="primary.500" fontSize="xl" textAlign="center">
-            Welche Seite der Vokabeln soll aufgedeckt sein?
-          </Heading>
-          <Button
-            marginTop="10px"
-            size="lg"
-            onPress={() => setQueryMode(QueryModes.foreignWord)}
-          >
-            Fremdwort
-          </Button>
-          <Button
-            marginTop="10px"
-            size="lg"
-            onPress={() => setQueryMode(QueryModes.knownWord)}
-          >
-            Übersetzung
-          </Button>
-          <Button
-            marginTop="10px"
-            size="lg"
-            onPress={() => setQueryMode(QueryModes.mixed)}
-          >
-            Gemischt
-          </Button>
-        </Center>
-      ) : (
-        <>
-          <Text alignSelf="center">
-            Fortschritt: {Math.floor((currentVocIndex / vocsPerUnit) * 100)}% (
-            {currentVocIndex} von {vocsPerUnit})
-          </Text>
-          <Progress
-            max={vocsPerUnit}
-            value={currentVocIndex}
-            bg="#d4b0b3"
-            _filledTrack={{ bg: "#ae4951" }}
-            width="90%"
-            marginTop="20px"
-          />
-          <HStack alignItems="center" flex={1}>
-            <Box
-              width="80%"
-              bg={{
-                linearGradient: {
-                  colors: ["#be632c", "#ae4951", "#57233a"],
-                  start: [0, 0],
-                  end: [1, 1],
-                },
-              }}
-              p="5"
-              rounded="xl"
+    <>
+      <HelpModal showHelp={showHelp} setShowHelp={setShowHelp} />
+      <VStack flex={1} alignItems="center" marginBottom="50px">
+        {queryMode === null ? (
+          <Center flex={1}>
+            <Heading color="primary.500" fontSize="2xl" textAlign="center">
+              Welche Seite der Vokabeln soll aufgedeckt werden?
+            </Heading>
+            <Button
+              marginTop="30px"
+              size="lg"
+              onPress={() => setQueryMode(QueryModes.foreignWord)}
             >
-              {currentVocIndex + 1 <= vocsPerUnit ? (
-                <>
+              Fremdwort
+            </Button>
+            <Button
+              marginTop="20px"
+              size="lg"
+              onPress={() => setQueryMode(QueryModes.knownWord)}
+            >
+              Übersetzung
+            </Button>
+            <Button
+              marginTop="20px"
+              size="lg"
+              onPress={() => setQueryMode(QueryModes.mixed)}
+            >
+              Gemischt
+            </Button>
+            <Button
+              marginTop="20px"
+              size="lg"
+              variant="ghost"
+              onPress={() => setShowHelp(!showHelp)}
+            >
+              <Feather
+                name="help-circle"
+                size={25}
+                color={colorMode === "dark" ? "white" : "black"}
+              />
+            </Button>
+          </Center>
+        ) : (
+          <>
+            <Text alignSelf="center">
+              Fortschritt: {Math.floor((currentVocIndex / vocsPerUnit) * 100)}%
+              ({currentVocIndex} von {vocsPerUnit})
+            </Text>
+            <Progress
+              max={vocsPerUnit}
+              value={currentVocIndex}
+              bg="#d4b0b3"
+              _filledTrack={{ bg: "#ae4951" }}
+              width="90%"
+              marginTop="20px"
+            />
+            <HStack alignItems="center" flex={1}>
+              <Box
+                width="80%"
+                bg={{
+                  linearGradient: {
+                    colors: ["#be632c", "#ae4951", "#57233a"],
+                    start: [0, 0],
+                    end: [1, 1],
+                  },
+                }}
+                p="5"
+                rounded="xl"
+              >
+                {currentVocIndex + 1 <= vocsPerUnit ? (
+                  <>
+                    <Text
+                      color="white"
+                      alignSelf="center"
+                      fontSize="lg"
+                      bold
+                      margin="50px"
+                      textAlign="center"
+                    >
+                      {vocListForUnit.length === 0
+                        ? "Laden"
+                        : vocListForUnit[currentVocIndex]?.[
+                            getVisibleVocSide()
+                          ]}
+                    </Text>
+                    <Text
+                      color="white"
+                      alignSelf="center"
+                      fontSize="lg"
+                      marginBottom="50px"
+                      textAlign="center"
+                    >
+                      {showSolution
+                        ? vocListForUnit[currentVocIndex]?.[
+                            getVisibleVocSide() === QueryModes.foreignWord
+                              ? QueryModes.knownWord
+                              : getVisibleVocSide() === QueryModes.knownWord
+                              ? QueryModes.foreignWord
+                              : QueryModes.foreignWord
+                          ]
+                        : null}
+                    </Text>
+                  </>
+                ) : (
                   <Text
                     color="white"
                     alignSelf="center"
@@ -206,102 +255,74 @@ export const Learn = (props: LearnProps) => {
                     margin="50px"
                     textAlign="center"
                   >
-                    {vocListForUnit.length === 0
-                      ? "Laden"
-                      : vocListForUnit[currentVocIndex]?.[getVisibleVocSide()]}
+                    Alle Vokabeln geschafft!
                   </Text>
-                  <Text
-                    color="white"
-                    alignSelf="center"
-                    fontSize="lg"
-                    marginBottom="50px"
-                    textAlign="center"
-                  >
-                    {showSolution
-                      ? vocListForUnit[currentVocIndex]?.[
-                          getVisibleVocSide() === QueryModes.foreignWord
-                            ? QueryModes.knownWord
-                            : getVisibleVocSide() === QueryModes.knownWord
-                            ? QueryModes.foreignWord
-                            : QueryModes.foreignWord
-                        ]
-                      : null}
-                  </Text>
-                </>
-              ) : (
-                <Text
-                  color="white"
-                  alignSelf="center"
-                  fontSize="lg"
-                  bold
-                  margin="50px"
+                )}
+              </Box>
+            </HStack>
+            <Button
+              disabled={showSolution}
+              bg={!showSolution ? "blue.600" : "gray.500"}
+              width="50%"
+              marginBottom="20px"
+              textAlign="center"
+              leftIcon={
+                currentVocIndex + 1 <= vocsPerUnit ? (
+                  <Icon as={Entypo} name="eye" size="sm" />
+                ) : (
+                  <Icon as={Ionicons} name="home" size="sm" />
+                )
+              }
+              onPress={() => {
+                currentVocIndex + 1 <= vocsPerUnit
+                  ? setShowSolution(true)
+                  : setSelectedElement(1);
+              }}
+            >
+              {currentVocIndex + 1 <= vocsPerUnit
+                ? "Auflösen"
+                : "Zurück zu Home"}
+            </Button>
+            {currentVocIndex + 1 <= vocsPerUnit && (
+              <>
+                <Button
+                  disabled={!showSolution}
+                  bg={showSolution ? "green.600" : "gray.500"}
+                  width="50%"
                   textAlign="center"
+                  leftIcon={<Icon as={Entypo} name="check" size="sm" />}
+                  onPress={() => {
+                    setShowSolution(false);
+                    modifyRepeatedWithoutMistakeAndLastSideQueried(
+                      true,
+                      getVisibleVocSide()
+                    );
+                  }}
                 >
-                  Alle Vokabeln geschafft!
-                </Text>
-              )}
-            </Box>
-          </HStack>
-          <Button
-            disabled={showSolution}
-            bg={!showSolution ? "blue.600" : "gray.500"}
-            width="50%"
-            marginBottom="20px"
-            textAlign="center"
-            leftIcon={
-              currentVocIndex + 1 <= vocsPerUnit ? (
-                <Icon as={Entypo} name="eye" size="sm" />
-              ) : (
-                <Icon as={Ionicons} name="home" size="sm" />
-              )
-            }
-            onPress={() => {
-              currentVocIndex + 1 <= vocsPerUnit
-                ? setShowSolution(true)
-                : setSelectedElement(1);
-            }}
-          >
-            {currentVocIndex + 1 <= vocsPerUnit ? "Auflösen" : "Zurück zu Home"}
-          </Button>
-          {currentVocIndex + 1 <= vocsPerUnit && (
-            <>
-              <Button
-                disabled={!showSolution}
-                bg={showSolution ? "green.600" : "gray.500"}
-                width="50%"
-                textAlign="center"
-                leftIcon={<Icon as={Entypo} name="check" size="sm" />}
-                onPress={() => {
-                  setShowSolution(false);
-                  modifyRepeatedWithoutMistakeAndLastSideQueried(
-                    true,
-                    getVisibleVocSide()
-                  );
-                }}
-              >
-                Hab ich gewusst
-              </Button>
-              <Button
-                disabled={!showSolution}
-                bg={showSolution ? "red.600" : "gray.500"}
-                width="50%"
-                textAlign="center"
-                marginTop="20px"
-                leftIcon={<Icon as={Entypo} name="cross" size="sm" />}
-                onPress={() => {
-                  setShowSolution(false);
-                  modifyRepeatedWithoutMistakeAndLastSideQueried(
-                    false,
-                    QueryModes.foreignWord
-                  );
-                }}
-              >
-                Hab ich nicht gewusst
-              </Button>
-            </>
-          )}
-        </>
-      )}
-    </VStack>
+                  Hab ich gewusst
+                </Button>
+                <Button
+                  disabled={!showSolution}
+                  bg={showSolution ? "red.600" : "gray.500"}
+                  width="50%"
+                  textAlign="center"
+                  marginTop="20px"
+                  leftIcon={<Icon as={Entypo} name="cross" size="sm" />}
+                  onPress={() => {
+                    setShowSolution(false);
+                    modifyRepeatedWithoutMistakeAndLastSideQueried(
+                      false,
+                      QueryModes.foreignWord
+                    );
+                  }}
+                >
+                  Hab ich nicht gewusst
+                </Button>
+              </>
+            )}
+          </>
+        )}
+      </VStack>
+    </>
   );
 };
