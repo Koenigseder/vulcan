@@ -1,7 +1,9 @@
 import {
   Button,
+  Center,
   Divider,
   Heading,
+  HStack,
   Icon,
   ScrollView,
   Stack,
@@ -11,6 +13,8 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { makeToast } from "../utils/helper";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
+import { VictoryPie } from "victory-native";
+import { Octicons } from "@expo/vector-icons";
 
 interface HomeProps {
   username: string;
@@ -23,6 +27,7 @@ export const Home = (props: HomeProps) => {
   const getTrafficLightColor = () => {
     if (props.allVocs?.length <= 0 || !props.allVocs)
       return "Noch keine Statistiken vorhanden.";
+
     const resultRed = props.allVocs.filter(
       (value: VocabularyInterface) => value.repeated_without_mistake === null
     );
@@ -36,32 +41,90 @@ export const Home = (props: HomeProps) => {
         value.repeated_without_mistake !== null &&
         value.repeated_without_mistake >= 5
     );
-    if (resultRed.length >= resultOrange.length && resultRed >= resultGreen) {
-      return "Die meisten Vokabeln wurden noch nicht geübt.";
-    } else if (resultOrange >= resultRed && resultOrange >= resultGreen) {
-      return "Die meisten Vokabeln wurden noch nicht oft genug geübt.";
-    } else if (resultGreen >= resultRed && resultGreen >= resultOrange) {
-      return "Die meisten Vokabeln wurden oft genug geübt.";
-    }
+
+    return {
+      resultRed: resultRed.length,
+      resultOrange: resultOrange.length,
+      resultGreen: resultGreen.length,
+    };
   };
+
+  const { resultRed, resultOrange, resultGreen } = getTrafficLightColor();
 
   return (
     <>
-      <Stack>
+      <Stack flex={1}>
         <Heading textAlign="center" mb="10" size="xl">
           Home
         </Heading>
+        <Heading textAlign="center" mb="2" size="md">
+          {`Hallo ${props.username}, schön dich wiederzusehen!`}
+        </Heading>
+        <Divider my="3" thickness="1" />
         <ScrollView>
-          <Heading textAlign="center" mb="2" size="md">
-            {`Hallo ${props.username}, schön dich wiederzusehen!`}
-          </Heading>
-          <Divider my="3" thickness="1" />
           <Heading textAlign="center" mb="2" size="md" paddingLeft="10px">
             Hier sind deine Statistiken:
           </Heading>
-          <Text paddingLeft="10px" textAlign="center">
-            {getTrafficLightColor()}
-          </Text>
+          {resultRed || resultOrange || resultGreen ? (
+            <>
+              <Center marginTop="-30px">
+                <VictoryPie
+                  data={[
+                    ...(resultRed
+                      ? [{ x: `x ${resultRed}`, y: resultRed }]
+                      : []),
+                    ...(resultOrange
+                      ? [{ x: `x ${resultOrange}`, y: resultOrange }]
+                      : []),
+                    ...(resultGreen
+                      ? [{ x: `x ${resultGreen}`, y: resultGreen }]
+                      : []),
+                  ]}
+                  colorScale={[
+                    ...(resultRed ? ["red"] : []),
+                    ...(resultOrange ? ["orange"] : []),
+                    ...(resultGreen ? ["green"] : []),
+                  ]}
+                  labelRadius={({ innerRadius }) => innerRadius + 25}
+                  innerRadius={50}
+                  style={{
+                    labels: { fill: "white", fontSize: 20, fontWeight: "bold" },
+                  }}
+                />
+              </Center>
+              <HStack justifyContent="center" space={4} flexDirection="row">
+                <HStack
+                  space={1}
+                  flex={1}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Octicons name="primitive-dot" size={24} color="red" />
+                  <Text textAlign="center">Nie geübt</Text>
+                </HStack>
+                <HStack
+                  space={1}
+                  flex={1}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Octicons name="primitive-dot" size={24} color="orange" />
+                  <Text textAlign="center">Nicht oft genug geübt</Text>
+                </HStack>
+                <HStack
+                  space={1}
+                  flex={1}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Octicons name="primitive-dot" size={24} color="green" />
+                  <Text textAlign="center">Genug geübt</Text>
+                </HStack>
+              </HStack>
+            </>
+          ) : (
+            <Text>Keine Daten vorhanden...</Text>
+          )}
         </ScrollView>
       </Stack>
       <Button

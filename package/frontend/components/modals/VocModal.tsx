@@ -1,5 +1,6 @@
 import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
-import { Button, FormControl, Input, Modal, Row } from "native-base";
+import { Feather } from "@expo/vector-icons";
+import { Button, FormControl, Input, Modal, Row, Text } from "native-base";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { VocabularyInterface } from "../../interfaces/VocabularyInterface";
@@ -30,6 +31,16 @@ export const VocModal = (props: VocModalProps): JSX.Element => {
     }
   }, [props.modalVisible]);
 
+  const checkIfVocAlreadyExists = (word: string) => {
+    if (props.editKey !== -1) return;
+    return (
+      props.allVocs.filter(
+        (voc: VocabularyInterface) =>
+          voc.foreign_word.toLowerCase() === word.toLowerCase()
+      ).length > 0
+    );
+  };
+
   return (
     <Modal
       isOpen={props.modalVisible}
@@ -51,6 +62,12 @@ export const VocModal = (props: VocModalProps): JSX.Element => {
               value={inputForeignWord}
               onChangeText={(value: string) => setInputForeignWord(value)}
             />
+            {checkIfVocAlreadyExists(inputForeignWord) && (
+              <Text color="#9e9e9e">
+                <Feather name="info" color="#9e9e9e" /> Dieses Wort existiert
+                bereits.
+              </Text>
+            )}
           </FormControl>
           <FormControl mt="3">
             <FormControl.Label>Übersetzung</FormControl.Label>

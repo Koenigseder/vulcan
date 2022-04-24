@@ -161,7 +161,7 @@ export const Settings = (props: SettingsProps) => {
   };
 
   return (
-    <Stack paddingBottom="85px">
+    <Stack flex={1}>
       <Note
         action={action}
         modalVisible={noteModalVisible}
@@ -409,7 +409,9 @@ export const Settings = (props: SettingsProps) => {
           </Button>
         </HStack>
         <Divider my="3" thickness="1" />
-        <Text alignSelf="center">Version {Constants.manifest?.version}</Text>
+        <Text alignSelf="center" marginBottom="10px">
+          Version {Constants.manifest?.version}
+        </Text>
       </ScrollView>
     </Stack>
   );

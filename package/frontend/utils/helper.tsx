@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "native-base";
+import { QueryModes } from "../enums/QueryModesEnum";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 
 export let lastEditTime = 0;
@@ -126,19 +127,30 @@ export const createVoc = async (voc: VocabularyInterface) => {
           ...voc,
           id: allVocsJSON[allVocsJSON.length - 1].id + 1,
           repeated_without_mistake: null,
+          last_voc_side_queried: QueryModes.knownWord,
         });
         await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
         makeToast("Vokabel erfolgreich gespeichert!");
       } else {
         let newVoc: VocabularyInterface[] = [
-          { ...voc, id: 0, repeated_without_mistake: null },
+          {
+            ...voc,
+            id: 0,
+            repeated_without_mistake: null,
+            last_voc_side_queried: QueryModes.knownWord,
+          },
         ];
         await AsyncStorage.setItem("VOCABULARY", JSON.stringify(newVoc));
         makeToast("Vokabel erfolgreich gespeichert!");
       }
     } else {
       let newVoc: VocabularyInterface[] = [
-        { ...voc, id: 0, repeated_without_mistake: null },
+        {
+          ...voc,
+          id: 0,
+          repeated_without_mistake: null,
+          last_voc_side_queried: QueryModes.knownWord,
+        },
       ];
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(newVoc));
       makeToast("Vokabel erfolgreich gespeichert!");
@@ -156,11 +168,8 @@ export const editVoc = async (voc: VocabularyInterface, index: number) => {
     const allVocs = await AsyncStorage.getItem("VOCABULARY");
     if (allVocs !== null) {
       let allVocsJSON: VocabularyInterface[] = JSON.parse(allVocs);
-      allVocsJSON[index] = {
-        ...allVocsJSON[index],
-        foreign_word: voc.foreign_word,
-        known_word: voc.known_word,
-      };
+      allVocsJSON[index].foreign_word = voc.foreign_word;
+      allVocsJSON[index].known_word = voc.known_word;
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
       makeToast("Vokabel erfolgreich gespeichert!");
     }
@@ -188,18 +197,17 @@ export const deleteVoc = async (index: number) => {
   }
 };
 
-export const editRepeatCountVoc = async (
+export const editVocRepeatCountAndLastSideQueried = async (
   repeatCount: number,
+  lastSideQueried: QueryModes.foreignWord | QueryModes.knownWord,
   index: number
 ) => {
   try {
     const allVocs = await AsyncStorage.getItem("VOCABULARY");
     if (allVocs !== null) {
       let allVocsJSON: VocabularyInterface[] = JSON.parse(allVocs);
-      allVocsJSON[index] = {
-        ...allVocsJSON[index],
-        repeated_without_mistake: repeatCount,
-      };
+      allVocsJSON[index].repeated_without_mistake = repeatCount;
+      allVocsJSON[index].last_voc_side_queried = lastSideQueried;
       await AsyncStorage.setItem("VOCABULARY", JSON.stringify(allVocsJSON));
     }
     storeLastEditTime(false);
