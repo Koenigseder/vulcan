@@ -14,7 +14,7 @@ import {
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { storeColorMode, storeUsername } from "../utils/helper";
-// import Vulcan from '../../../assets/Vulcan.png'
+import { InfoModal } from "../components/modals/InfoModal";
 
 interface IntroductionProps {
   setUsername: (s: string) => void;
@@ -23,12 +23,11 @@ interface IntroductionProps {
 
 export const Introduction = (props: IntroductionProps) => {
   const [username, setUsername] = useState<string>("");
-  const { colorMode, toggleColorMode } = useColorMode();
-  const [selectedColorMode, setSelectedColorMode] = useState(colorMode);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const { colorMode, setColorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
-    toggleColorMode();
-    setSelectedColorMode("light");
+    setColorMode("light");
   }, []);
 
   return (
@@ -36,6 +35,7 @@ export const Introduction = (props: IntroductionProps) => {
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
     >
+      <InfoModal showInfo={showInfoModal} setShowInfo={setShowInfoModal} />
       <Stack alignItems="center">
         <Heading
           size="xl"
@@ -46,8 +46,29 @@ export const Introduction = (props: IntroductionProps) => {
           size={200}
           borderRadius={100}
           alt="Vulcan Icon"
-          source={require("../../../assets/Vulcan.png")}
+          source={require("../../../assets/vulcan.png")}
         />
+        <Divider my="3" thickness="1" />
+        <Heading textAlign="center" size="lg">
+          Dein Vulcan-Account
+        </Heading>
+        <Text textAlign="center" mb="3">
+          Falls du einen Vulcan-Account besitzt, kannst du dich nach der kurzen
+          Einrichtung anmelden und all deine Daten synchronisieren.
+        </Text>
+        <HStack justifyContent="center" alignItems="center">
+          <Text textAlign="center">Was ist ein Vulcan-Account? </Text>
+          <Button
+            variant="ghost"
+            onPress={() => setShowInfoModal(!showInfoModal)}
+          >
+            <Feather
+              name="help-circle"
+              size={25}
+              color={colorMode === "dark" ? "white" : "black"}
+            />
+          </Button>
+        </HStack>
         <Divider my="3" thickness="1" />
         <Text mt="20px" fontSize="md" textAlign="center">
           Wir bräuchten deinen Namen, damit du starten kannst:
@@ -85,11 +106,6 @@ export const Introduction = (props: IntroductionProps) => {
               colorMode === "light" || colorMode === undefined ? true : false
             }
             onToggle={() => {
-              setSelectedColorMode(
-                selectedColorMode === "light" || selectedColorMode === undefined
-                  ? "dark"
-                  : "light"
-              );
               toggleColorMode();
             }}
           />
@@ -97,7 +113,7 @@ export const Introduction = (props: IntroductionProps) => {
             name="sun"
             size={24}
             color={
-              colorMode === "light" || selectedColorMode === undefined
+              colorMode === "light" || colorMode === undefined
                 ? "black"
                 : "white"
             }
@@ -115,7 +131,7 @@ export const Introduction = (props: IntroductionProps) => {
             storeUsername(username).then(() => {
               props.setSelectedElement(1);
             });
-            storeColorMode(!selectedColorMode ? "light" : selectedColorMode);
+            storeColorMode(!colorMode ? "light" : colorMode);
             props.setUsername(username);
           }}
         >

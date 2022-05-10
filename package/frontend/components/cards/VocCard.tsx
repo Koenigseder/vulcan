@@ -33,7 +33,7 @@ export const VocCard = (props: VocCardProps): JSX.Element => {
                 {props.foreign_word}
               </Text>
               <Octicons
-                name="primitive-dot"
+                name="dot-fill"
                 size={24}
                 color={
                   props.repeated_without_mistake === null ||

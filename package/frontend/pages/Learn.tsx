@@ -7,13 +7,13 @@ import {
   Heading,
   HStack,
   Icon,
-  Modal,
   Progress,
   Text,
   useColorMode,
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
+import { BackHandler } from "react-native";
 import { HelpModal } from "../components/modals/HelpModal";
 import { QueryModes } from "../enums/QueryModesEnum";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
@@ -40,6 +40,17 @@ export const Learn = (props: LearnProps) => {
   );
   const [currentVocIndex, setCurrentVocIndex] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+  }, []);
+
+  const backAction = () => {
+    props.setSelectedElement(1);
+    return true;
+  };
 
   const setupVocListForUnit = () => {
     const vocList: VocabularyInterface[] = [];

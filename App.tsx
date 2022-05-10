@@ -161,6 +161,7 @@ const Base = () => {
             allVocs={allVocs ? allVocs : []}
             setAllVocs={setAllVocs}
             isAllVocsLoading={isAllVocsLoading}
+            setSelectedElement={setSelectedElement}
           />
         ) : selectedElement === 1 ? (
           <Home
