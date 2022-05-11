@@ -19,13 +19,14 @@ import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 import { VocCard } from "../components/cards/VocCard";
 import { VocModal } from "../components/modals/VocModal";
 import { createVoc, deleteVoc, editVoc } from "../utils/helper";
-import { TouchableOpacity } from "react-native";
+import { BackHandler, TouchableOpacity } from "react-native";
 import { QueryModes } from "../enums/QueryModesEnum";
 
 interface VocsProps {
   allVocs: VocabularyInterface[];
   setAllVocs: (vocs: VocabularyInterface[]) => void;
   isAllVocsLoading: boolean;
+  setSelectedElement: (n: number) => void;
 }
 
 export const Vocs = (props: VocsProps) => {
@@ -44,6 +45,17 @@ export const Vocs = (props: VocsProps) => {
   useEffect(() => {
     setVocs(allVocs);
   }, [allVocs]);
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+  }, []);
+
+  const backAction = () => {
+    props.setSelectedElement(1);
+    return true;
+  };
 
   const handleCreateVoc = (voc: VocabularyInterface) => {
     createVoc({ ...voc }).then(() => {

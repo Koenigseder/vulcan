@@ -7,13 +7,13 @@ import {
   Heading,
   HStack,
   Icon,
-  Modal,
   Progress,
   Text,
   useColorMode,
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
+import { BackHandler } from "react-native";
 import { HelpModal } from "../components/modals/HelpModal";
 import { QueryModes } from "../enums/QueryModesEnum";
 import { VocabularyInterface } from "../interfaces/VocabularyInterface";
@@ -40,6 +40,17 @@ export const Learn = (props: LearnProps) => {
   );
   const [currentVocIndex, setCurrentVocIndex] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+  }, []);
+
+  const backAction = () => {
+    props.setSelectedElement(1);
+    return true;
+  };
 
   const setupVocListForUnit = () => {
     const vocList: VocabularyInterface[] = [];
@@ -138,6 +149,19 @@ export const Learn = (props: LearnProps) => {
     return QueryModes.foreignWord;
   };
 
+  const getQueryModeName = (queryMode: string) => {
+    switch (queryMode) {
+      case QueryModes.foreignWord:
+        return "Fremdwort";
+      case QueryModes.knownWord:
+        return "Übersetzung";
+      case QueryModes.mixed:
+        return "Gemischt";
+      default:
+        return "Unknown...";
+    }
+  };
+
   useEffect(() => {
     setupVocListForUnit();
   }, []);
@@ -187,7 +211,10 @@ export const Learn = (props: LearnProps) => {
           </Center>
         ) : (
           <>
-            <Text alignSelf="center">
+            <Text alignSelf="center" mb="3">
+              Modus: {getQueryModeName(queryMode)}
+            </Text>
+            <Text alignSelf="center" bold>
               Fortschritt: {Math.floor((currentVocIndex / vocsPerUnit) * 100)}%
               ({currentVocIndex} von {vocsPerUnit})
             </Text>
@@ -197,7 +224,7 @@ export const Learn = (props: LearnProps) => {
               bg="#d4b0b3"
               _filledTrack={{ bg: "#ae4951" }}
               width="90%"
-              marginTop="20px"
+              marginTop="3"
             />
             <HStack alignItems="center" flex={1}>
               <Box

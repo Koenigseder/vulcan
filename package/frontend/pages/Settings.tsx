@@ -30,6 +30,7 @@ import { VocabularyInterface } from "../interfaces/VocabularyInterface";
 import AntDesign from "@expo/vector-icons/build/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
 import { auth } from "../../../firebase";
+import { BackHandler } from "react-native";
 
 enum actionEnum {
   SIGN_OUT = "SIGN_OUT",
@@ -107,7 +108,7 @@ const Note = (props: NoteProps) => {
                 Abbrechen
               </Button>
               <Button
-                bgColor="#ae4951"
+                bg="#ae4951"
                 onPress={() => {
                   props.action === actionEnum.SIGN_OUT
                     ? props.handleSignout()
@@ -148,7 +149,16 @@ export const Settings = (props: SettingsProps) => {
     ) {
       setAmountOfVocsPerUnit(0);
     }
+
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
   }, []);
+
+  const backAction = () => {
+    props.setSelectedElement(1);
+    return true;
+  };
 
   const handleSignOut = () => {
     auth
@@ -179,7 +189,7 @@ export const Settings = (props: SettingsProps) => {
             size={10}
             borderRadius={100}
             alt="Vulcan Icon"
-            source={require("../../../assets/Vulcan.png")}
+            source={require("../../../assets/vulcan.png")}
           />
           <Heading textAlign="left" size="lg" paddingLeft="10px">
             Dein Vulcan-Account
@@ -230,12 +240,11 @@ export const Settings = (props: SettingsProps) => {
             </Text>
             <HStack justifyContent="center" space={2}>
               <Button
-                isDisabled={lastEditTime === 0}
                 onPress={() => {
                   setAction(actionEnum.STORE_TO_FIRESTORE);
                   setNoteModalVisible(true);
                 }}
-                bgColor="#ae4951"
+                bg="#ae4951"
                 leftIcon={
                   <Feather name="upload-cloud" size={24} color="white" />
                 }
@@ -243,12 +252,11 @@ export const Settings = (props: SettingsProps) => {
                 Daten sichern
               </Button>
               <Button
-                isDisabled
                 onPress={() => {
                   setAction(actionEnum.STORE_TO_LOCAL);
                   setNoteModalVisible(true);
                 }}
-                bgColor="#ae4951"
+                bg="#ae4951"
                 leftIcon={
                   <Feather name="download-cloud" size={24} color="white" />
                 }
@@ -261,7 +269,7 @@ export const Settings = (props: SettingsProps) => {
         {!props.isUserLoggedIn && (
           <>
             <Button
-              bgColor="#ae4951"
+              bg="#ae4951"
               fontSize="20px"
               paddingLeft="10px"
               mb="3"
@@ -291,7 +299,7 @@ export const Settings = (props: SettingsProps) => {
             onChangeText={(value) => setUsername(value)}
           />
           <Button
-            bgColor="#ae4951"
+            bg="#ae4951"
             isDisabled={!username}
             onPress={() => {
               storeUsername(username).then(() =>
@@ -352,7 +360,7 @@ export const Settings = (props: SettingsProps) => {
                 <Slider.Thumb bg="#ae4951" />
               </Slider>
               <Button
-                bgColor="#ae4951"
+                bg="#ae4951"
                 isDisabled={!amountOfVocsPerUnit}
                 onPress={() => {
                   storeAmountOfVocsPerUnit(amountOfVocsPerUnit.toString()).then(
@@ -398,7 +406,7 @@ export const Settings = (props: SettingsProps) => {
             />
           </HStack>
           <Button
-            bgColor="#ae4951"
+            bg="#ae4951"
             isDisabled={colorMode === selectedColorMode}
             onPress={() => {
               toggleColorMode();

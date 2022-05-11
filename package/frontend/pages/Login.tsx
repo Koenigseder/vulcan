@@ -15,6 +15,7 @@ import {
   Icon,
 } from "native-base";
 import { auth } from "../../../firebase";
+import { BackHandler } from "react-native";
 
 interface LoginProps {
   setSelectedElement: (n: number) => void;
@@ -43,6 +44,17 @@ export const Login = (props: LoginProps) => {
 
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+  }, []);
+
+  const backAction = () => {
+    props.setSelectedElement(2);
+    return true;
+  };
 
   const handleSignUp = () => {
     const pattern = new RegExp(
@@ -116,7 +128,7 @@ export const Login = (props: LoginProps) => {
           size={150}
           borderRadius={100}
           alt="Vulcan Icon"
-          source={require("../../../assets/Vulcan.png")}
+          source={require("../../../assets/vulcan.png")}
         />
         <Text mt="20px" fontSize="md" textAlign="center">
           {`${isOnLogin ? "Melde" : "Registriere"} dich bei Vulcan${
@@ -181,7 +193,7 @@ export const Login = (props: LoginProps) => {
         <Button
           mt="3"
           size="lg"
-          bgColor="#ae4951"
+          bg="#ae4951"
           isDisabled={
             emailInput.trim() === "" ||
             passwordInput.trim() === "" ||
@@ -200,7 +212,7 @@ export const Login = (props: LoginProps) => {
         </HStack>
         <Button
           size="lg"
-          bgColor="#ae4951"
+          bg="#ae4951"
           onPress={() => {
             setIsOnLogin(!isOnLogin);
             setEmailInput("");

@@ -102,7 +102,7 @@ export const VocModal = (props: VocModalProps): JSX.Element => {
                 Abbrechen
               </Button>
               <Button
-                bgColor="#ae4951"
+                bg="#ae4951"
                 isDisabled={!inputForeignWord.trim() || !inputKnownWord.trim()}
                 onPress={() => {
                   props.editKey === -1
