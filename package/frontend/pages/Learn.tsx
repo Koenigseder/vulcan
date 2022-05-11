@@ -149,6 +149,19 @@ export const Learn = (props: LearnProps) => {
     return QueryModes.foreignWord;
   };
 
+  const getQueryModeName = (queryMode: string) => {
+    switch (queryMode) {
+      case QueryModes.foreignWord:
+        return "Fremdwort";
+      case QueryModes.knownWord:
+        return "Übersetzung";
+      case QueryModes.mixed:
+        return "Gemischt";
+      default:
+        return "Unknown...";
+    }
+  };
+
   useEffect(() => {
     setupVocListForUnit();
   }, []);
@@ -198,7 +211,10 @@ export const Learn = (props: LearnProps) => {
           </Center>
         ) : (
           <>
-            <Text alignSelf="center">
+            <Text alignSelf="center" mb="3">
+              Modus: {getQueryModeName(queryMode)}
+            </Text>
+            <Text alignSelf="center" bold>
               Fortschritt: {Math.floor((currentVocIndex / vocsPerUnit) * 100)}%
               ({currentVocIndex} von {vocsPerUnit})
             </Text>
@@ -208,7 +224,7 @@ export const Learn = (props: LearnProps) => {
               bg="#d4b0b3"
               _filledTrack={{ bg: "#ae4951" }}
               width="90%"
-              marginTop="20px"
+              marginTop="3"
             />
             <HStack alignItems="center" flex={1}>
               <Box
