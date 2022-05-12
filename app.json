@@ -23,7 +23,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "de.kojyx.vulcan"
+      "package": "de.koenigseder.vulcan"
     },
     "web": {
       "favicon": "./assets/favicon.png"
