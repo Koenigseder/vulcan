@@ -2,7 +2,7 @@
   "expo": {
     "name": "Vulcan",
     "slug": "Vulcan",
-    "version": "Beta 1.2.4",
+    "version": "Beta 1.2.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -18,7 +18,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 15,
+      "versionCode": 16,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
